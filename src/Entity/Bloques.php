@@ -24,27 +24,17 @@ class Bloques
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $descripcion = null;
 
-    #[ORM\ManyToOne(inversedBy: 'zonaBloques')]
-    private ?Zonas $zonas = null;
-
     #[ORM\ManyToOne(inversedBy: 'bloques')]
-    private ?Zonas $bloqueZonas = null;
+    private ?Zonas $bloqueZona = null;
 
     /**
      * @var Collection<int, Vias>
      */
-    #[ORM\OneToMany(targetEntity: Vias::class, mappedBy: 'bloques')]
-    private Collection $bloqueVias;
-
-    /**
-     * @var Collection<int, Vias>
-     */
-    #[ORM\OneToMany(targetEntity: Vias::class, mappedBy: 'viasBloque')]
+    #[ORM\OneToMany(targetEntity: Vias::class, mappedBy: 'viaBloque')]
     private Collection $vias;
 
     public function __construct()
     {
-        $this->bloqueVias = new ArrayCollection();
         $this->vias = new ArrayCollection();
     }
 
@@ -96,59 +86,18 @@ class Bloques
         return $this;
     }
 
-    public function getZonas(): ?Zonas
+    public function getBloqueZona(): ?Zonas
     {
-        return $this->zonas;
+        return $this->bloqueZona;
     }
 
-    public function setZonas(?Zonas $zonas): static
+    public function setBloqueZona(?Zonas $bloqueZona): static
     {
-        $this->zonas = $zonas;
+        $this->bloqueZona = $bloqueZona;
 
         return $this;
     }
 
-    public function getBloqueZonas(): ?Zonas
-    {
-        return $this->bloqueZonas;
-    }
-
-    public function setBloqueZonas(?Zonas $bloqueZonas): static
-    {
-        $this->bloqueZonas = $bloqueZonas;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Vias>
-     */
-    public function getBloqueVias(): Collection
-    {
-        return $this->bloqueVias;
-    }
-
-    public function addBloqueVia(Vias $bloqueVia): static
-    {
-        if (!$this->bloqueVias->contains($bloqueVia)) {
-            $this->bloqueVias->add($bloqueVia);
-            $bloqueVia->setBloques($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBloqueVia(Vias $bloqueVia): static
-    {
-        if ($this->bloqueVias->removeElement($bloqueVia)) {
-            // set the owning side to null (unless already changed)
-            if ($bloqueVia->getBloques() === $this) {
-                $bloqueVia->setBloques(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Vias>
@@ -162,7 +111,7 @@ class Bloques
     {
         if (!$this->vias->contains($via)) {
             $this->vias->add($via);
-            $via->setViasBloque($this);
+            $via->setViaBloque($this);
         }
 
         return $this;
@@ -172,8 +121,8 @@ class Bloques
     {
         if ($this->vias->removeElement($via)) {
             // set the owning side to null (unless already changed)
-            if ($via->getViasBloque() === $this) {
-                $via->setViasBloque(null);
+            if ($via->getViaBloque() === $this) {
+                $via->setViaBloque(null);
             }
         }
 

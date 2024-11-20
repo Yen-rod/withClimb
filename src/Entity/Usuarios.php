@@ -48,50 +48,27 @@ class Usuarios
     /**
      * @var Collection<int, Ascensos>
      */
-    #[ORM\OneToMany(targetEntity: Ascensos::class, mappedBy: 'usuarios')]
+    #[ORM\OneToMany(targetEntity: Ascensos::class, mappedBy: 'ascensoUsuario')]
     private Collection $ascensos;
 
     /**
      * @var Collection<int, Fotos>
      */
-    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'usuarios')]
+    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'fotoUsuario')]
     private Collection $fotos;
 
     /**
      * @var Collection<int, CanalComunicacion>
      */
-    #[ORM\ManyToMany(targetEntity: CanalComunicacion::class, inversedBy: 'usuarios')]
+    #[ORM\ManyToMany(targetEntity: CanalComunicacion::class, inversedBy: 'canalUsuario')]
     private Collection $canales;
 
     /**
      * @var Collection<int, MiembroCanal>
      */
-    #[ORM\OneToMany(targetEntity: MiembroCanal::class, mappedBy: 'usuarios')]
+    #[ORM\OneToMany(targetEntity: MiembroCanal::class, mappedBy: 'miembroUsuario')]
     private Collection $miembrosCanal;
 
-    /**
-     * @var Collection<int, MiembroCanal>
-     */
-    #[ORM\OneToMany(targetEntity: MiembroCanal::class, mappedBy: 'usuario')]
-    private Collection $miembroCanals;
-
-    /**
-     * @var Collection<int, Comentarios>
-     */
-    #[ORM\OneToMany(targetEntity: Comentarios::class, mappedBy: 'comentarioUsuarios')]
-    private Collection $comentariosUsuarios;
-
-    /**
-     * @var Collection<int, Ascensos>
-     */
-    #[ORM\OneToMany(targetEntity: Ascensos::class, mappedBy: 'ascensosUsuario')]
-    private Collection $ascensosUsuario;
-
-    /**
-     * @var Collection<int, Fotos>
-     */
-    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'fotosUsuario')]
-    private Collection $fotosUsuario;
 
     public function __construct()
     {
@@ -100,10 +77,6 @@ class Usuarios
         $this->fotos = new ArrayCollection();
         $this->canales = new ArrayCollection();
         $this->miembrosCanal = new ArrayCollection();
-        $this->miembroCanals = new ArrayCollection();
-        $this->comentariosUsuarios = new ArrayCollection();
-        $this->ascensosUsuario = new ArrayCollection();
-        $this->fotosUsuario = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -247,7 +220,9 @@ class Usuarios
     {
         if (!$this->ascensos->contains($ascenso)) {
             $this->ascensos->add($ascenso);
-            $ascenso->setUsuarios($this);
+            $ascenso->setAscensoUsuario($this);
+            
+
         }
 
         return $this;
@@ -257,8 +232,8 @@ class Usuarios
     {
         if ($this->ascensos->removeElement($ascenso)) {
             // set the owning side to null (unless already changed)
-            if ($ascenso->getUsuarios() === $this) {
-                $ascenso->setUsuarios(null);
+            if ($ascenso->getAscensoUsuario() === $this) {
+                $ascenso->setAscensoUsuario(null);
             }
         }
 
@@ -277,7 +252,7 @@ class Usuarios
     {
         if (!$this->fotos->contains($foto)) {
             $this->fotos->add($foto);
-            $foto->setUsuarios($this);
+            $foto->setFotoUsuario($this);
         }
 
         return $this;
@@ -287,8 +262,8 @@ class Usuarios
     {
         if ($this->fotos->removeElement($foto)) {
             // set the owning side to null (unless already changed)
-            if ($foto->getUsuarios() === $this) {
-                $foto->setUsuarios(null);
+            if ($foto->getFotoUsuario() === $this) {
+                $foto->setFotoUsuario(null);
             }
         }
 
@@ -303,18 +278,18 @@ class Usuarios
         return $this->canales;
     }
 
-    public function addCanale(CanalComunicacion $canale): static
+    public function addCanal(CanalComunicacion $canal): static
     {
-        if (!$this->canales->contains($canale)) {
-            $this->canales->add($canale);
+        if (!$this->canales->contains($canal)) {
+            $this->canales->add($canal);
         }
 
         return $this;
     }
 
-    public function removeCanale(CanalComunicacion $canale): static
+    public function removeCanal(CanalComunicacion $canal): static
     {
-        $this->canales->removeElement($canale);
+        $this->canales->removeElement($canal);
 
         return $this;
     }
@@ -331,7 +306,7 @@ class Usuarios
     {
         if (!$this->miembrosCanal->contains($miembrosCanal)) {
             $this->miembrosCanal->add($miembrosCanal);
-            $miembrosCanal->setUsuarios($this);
+            $miembrosCanal->setMiembroUsuario($this);
         }
 
         return $this;
@@ -341,131 +316,12 @@ class Usuarios
     {
         if ($this->miembrosCanal->removeElement($miembrosCanal)) {
             // set the owning side to null (unless already changed)
-            if ($miembrosCanal->getUsuarios() === $this) {
-                $miembrosCanal->setUsuarios(null);
+            if ($miembrosCanal->getMiembroUsuario() === $this) {
+                $miembrosCanal->setMiembroUsuario(null);
             }
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, MiembroCanal>
-     */
-    public function getMiembroCanals(): Collection
-    {
-        return $this->miembroCanals;
-    }
-
-    public function addMiembroCanal(MiembroCanal $miembroCanal): static
-    {
-        if (!$this->miembroCanals->contains($miembroCanal)) {
-            $this->miembroCanals->add($miembroCanal);
-            $miembroCanal->setUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMiembroCanal(MiembroCanal $miembroCanal): static
-    {
-        if ($this->miembroCanals->removeElement($miembroCanal)) {
-            // set the owning side to null (unless already changed)
-            if ($miembroCanal->getUsuario() === $this) {
-                $miembroCanal->setUsuario(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Comentarios>
-     */
-    public function getComentariosUsuarios(): Collection
-    {
-        return $this->comentariosUsuarios;
-    }
-
-    public function addComentariosUsuario(Comentarios $comentariosUsuario): static
-    {
-        if (!$this->comentariosUsuarios->contains($comentariosUsuario)) {
-            $this->comentariosUsuarios->add($comentariosUsuario);
-            $comentariosUsuario->setComentarioUsuarios($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComentariosUsuario(Comentarios $comentariosUsuario): static
-    {
-        if ($this->comentariosUsuarios->removeElement($comentariosUsuario)) {
-            // set the owning side to null (unless already changed)
-            if ($comentariosUsuario->getComentarioUsuarios() === $this) {
-                $comentariosUsuario->setComentarioUsuarios(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Ascensos>
-     */
-    public function getAscensosUsuario(): Collection
-    {
-        return $this->ascensosUsuario;
-    }
-
-    public function addAscensosUsuario(Ascensos $ascensosUsuario): static
-    {
-        if (!$this->ascensosUsuario->contains($ascensosUsuario)) {
-            $this->ascensosUsuario->add($ascensosUsuario);
-            $ascensosUsuario->setAscensosUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAscensosUsuario(Ascensos $ascensosUsuario): static
-    {
-        if ($this->ascensosUsuario->removeElement($ascensosUsuario)) {
-            // set the owning side to null (unless already changed)
-            if ($ascensosUsuario->getAscensosUsuario() === $this) {
-                $ascensosUsuario->setAscensosUsuario(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Fotos>
-     */
-    public function getFotosUsuario(): Collection
-    {
-        return $this->fotosUsuario;
-    }
-
-    public function addFotosUsuario(Fotos $fotosUsuario): static
-    {
-        if (!$this->fotosUsuario->contains($fotosUsuario)) {
-            $this->fotosUsuario->add($fotosUsuario);
-            $fotosUsuario->setFotosUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFotosUsuario(Fotos $fotosUsuario): static
-    {
-        if ($this->fotosUsuario->removeElement($fotosUsuario)) {
-            // set the owning side to null (unless already changed)
-            if ($fotosUsuario->getFotosUsuario() === $this) {
-                $fotosUsuario->setFotosUsuario(null);
-            }
-        }
-
-        return $this;
-    }
 }

@@ -24,13 +24,10 @@ class MiembroCanal
     private ?string $rol = null;
 
     #[ORM\ManyToOne(inversedBy: 'miembrosCanal')]
-    private ?Usuarios $usuarios = null;
+    private ?Usuarios $miembroUsuario = null;
 
     #[ORM\ManyToOne(inversedBy: 'miembros')]
     private ?CanalComunicacion $canalComunicacion = null;
-
-    #[ORM\ManyToOne(inversedBy: 'miembroCanals')]
-    private ?Usuarios $usuario = null;
 
     #[ORM\ManyToOne(inversedBy: 'miembroCanals')]
     private ?CanalComunicacion $canal = null;
@@ -83,14 +80,14 @@ class MiembroCanal
         return $this;
     }
 
-    public function getUsuarios(): ?Usuarios
+    public function getMiembroUsuario(): ?Usuarios
     {
-        return $this->usuarios;
+        return $this->miembroUsuario;
     }
 
-    public function setUsuarios(?Usuarios $usuarios): static
+    public function setMiembroUsuario(?Usuarios $miembroUsuario): static
     {
-        $this->usuarios = $usuarios;
+        $this->miembroUsuario = $miembroUsuario;
 
         return $this;
     }
@@ -103,18 +100,6 @@ class MiembroCanal
     public function setCanalComunicacion(?CanalComunicacion $canalComunicacion): static
     {
         $this->canalComunicacion = $canalComunicacion;
-
-        return $this;
-    }
-
-    public function getUsuario(): ?Usuarios
-    {
-        return $this->usuario;
-    }
-
-    public function setUsuario(?Usuarios $usuario): static
-    {
-        $this->usuario = $usuario;
 
         return $this;
     }

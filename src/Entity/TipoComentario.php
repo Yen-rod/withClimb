@@ -25,17 +25,11 @@ class TipoComentario
      * @var Collection<int, Comentarios>
      */
     #[ORM\OneToMany(targetEntity: Comentarios::class, mappedBy: 'tipoComentario')]
-    private Collection $tipoComentarios;
-
-    /**
-     * @var Collection<int, Comentarios>
-     */
-    #[ORM\OneToMany(targetEntity: Comentarios::class, mappedBy: 'comentarioTipoComentario')]
     private Collection $comentarios;
+
 
     public function __construct()
     {
-        $this->tipoComentarios = new ArrayCollection();
         $this->comentarios = new ArrayCollection();
     }
 
@@ -78,60 +72,31 @@ class TipoComentario
     /**
      * @return Collection<int, Comentarios>
      */
-    public function getTipoComentarios(): Collection
-    {
-        return $this->tipoComentarios;
-    }
-
-    public function addTipoComentario(Comentarios $tipoComentario): static
-    {
-        if (!$this->tipoComentarios->contains($tipoComentario)) {
-            $this->tipoComentarios->add($tipoComentario);
-            $tipoComentario->setTipoComentario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTipoComentario(Comentarios $tipoComentario): static
-    {
-        if ($this->tipoComentarios->removeElement($tipoComentario)) {
-            // set the owning side to null (unless already changed)
-            if ($tipoComentario->getTipoComentario() === $this) {
-                $tipoComentario->setTipoComentario(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Comentarios>
-     */
     public function getComentarios(): Collection
     {
         return $this->comentarios;
     }
 
-    public function addComentario(Comentarios $comentario): static
+    public function addTipoComentario(Comentarios $comentario): static
     {
         if (!$this->comentarios->contains($comentario)) {
             $this->comentarios->add($comentario);
-            $comentario->setComentarioTipoComentario($this);
+            $comentario->setTipoComentario($this);
         }
 
         return $this;
     }
 
-    public function removeComentario(Comentarios $comentario): static
+    public function removeTipoComentario(Comentarios $comentario): static
     {
         if ($this->comentarios->removeElement($comentario)) {
             // set the owning side to null (unless already changed)
-            if ($comentario->getComentarioTipoComentario() === $this) {
-                $comentario->setComentarioTipoComentario(null);
+            if ($comentario->getTipoComentario() === $this) {
+                $comentario->setTipoComentario(null);
             }
         }
 
         return $this;
     }
+
 }

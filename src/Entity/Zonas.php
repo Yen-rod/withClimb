@@ -28,35 +28,25 @@ class Zonas
     private ?int $totalAscensos = null;
 
     /**
-     * @var Collection<int, Bloques>
-     */
-    #[ORM\OneToMany(targetEntity: Bloques::class, mappedBy: 'zonas')]
-    private Collection $zonaBloques;
-
-    /**
      * @var Collection<int, Restaurantes>
      */
-    #[ORM\OneToMany(targetEntity: Restaurantes::class, mappedBy: 'zonas')]
-    private Collection $zonaRestaurantes;
+    #[ORM\OneToMany(targetEntity: Restaurantes::class, mappedBy: 'zonaRestaurante')]
+    private Collection $restaurantes;
 
     /**
      * @var Collection<int, Bloques>
      */
-    #[ORM\OneToMany(targetEntity: Bloques::class, mappedBy: 'bloqueZonas')]
+    #[ORM\OneToMany(targetEntity: Bloques::class, mappedBy: 'bloqueZona')]
     private Collection $bloques;
 
-    /**
-     * @var Collection<int, Restaurantes>
-     */
-    #[ORM\OneToMany(targetEntity: Restaurantes::class, mappedBy: 'restaurantesZona')]
-    private Collection $restaurantes;
+
 
     public function __construct()
     {
-        $this->zonaBloques = new ArrayCollection();
-        $this->zonaRestaurantes = new ArrayCollection();
         $this->bloques = new ArrayCollection();
         $this->restaurantes = new ArrayCollection();
+        $this->bloques = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -119,65 +109,6 @@ class Zonas
         return $this;
     }
 
-    /**
-     * @return Collection<int, Bloques>
-     */
-    public function getZonaBloques(): Collection
-    {
-        return $this->zonaBloques;
-    }
-
-    public function addZonaBloque(Bloques $zonaBloque): static
-    {
-        if (!$this->zonaBloques->contains($zonaBloque)) {
-            $this->zonaBloques->add($zonaBloque);
-            $zonaBloque->setZonas($this);
-        }
-
-        return $this;
-    }
-
-    public function removeZonaBloque(Bloques $zonaBloque): static
-    {
-        if ($this->zonaBloques->removeElement($zonaBloque)) {
-            // set the owning side to null (unless already changed)
-            if ($zonaBloque->getZonas() === $this) {
-                $zonaBloque->setZonas(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Restaurantes>
-     */
-    public function getZonaRestaurantes(): Collection
-    {
-        return $this->zonaRestaurantes;
-    }
-
-    public function addZonaRestaurante(Restaurantes $zonaRestaurante): static
-    {
-        if (!$this->zonaRestaurantes->contains($zonaRestaurante)) {
-            $this->zonaRestaurantes->add($zonaRestaurante);
-            $zonaRestaurante->setZonas($this);
-        }
-
-        return $this;
-    }
-
-    public function removeZonaRestaurante(Restaurantes $zonaRestaurante): static
-    {
-        if ($this->zonaRestaurantes->removeElement($zonaRestaurante)) {
-            // set the owning side to null (unless already changed)
-            if ($zonaRestaurante->getZonas() === $this) {
-                $zonaRestaurante->setZonas(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Bloques>
@@ -191,7 +122,7 @@ class Zonas
     {
         if (!$this->bloques->contains($bloque)) {
             $this->bloques->add($bloque);
-            $bloque->setBloqueZonas($this);
+            $bloque->setBloqueZona($this);
         }
 
         return $this;
@@ -201,8 +132,8 @@ class Zonas
     {
         if ($this->bloques->removeElement($bloque)) {
             // set the owning side to null (unless already changed)
-            if ($bloque->getBloqueZonas() === $this) {
-                $bloque->setBloqueZonas(null);
+            if ($bloque->getBloqueZona() === $this) {
+                $bloque->setBloqueZona(null);
             }
         }
 
@@ -217,11 +148,11 @@ class Zonas
         return $this->restaurantes;
     }
 
-    public function addRestaurante(Restaurantes $restaurante): static
+    public function addRestaurantes(Restaurantes $restaurante): static
     {
         if (!$this->restaurantes->contains($restaurante)) {
             $this->restaurantes->add($restaurante);
-            $restaurante->setRestaurantesZona($this);
+            $restaurante->setZonaRestaurante($this);
         }
 
         return $this;
@@ -231,8 +162,8 @@ class Zonas
     {
         if ($this->restaurantes->removeElement($restaurante)) {
             // set the owning side to null (unless already changed)
-            if ($restaurante->getRestaurantesZona() === $this) {
-                $restaurante->setRestaurantesZona(null);
+            if ($restaurante->getZonaRestaurante() === $this) {
+                $restaurante->setZonaRestaurante(null);
             }
         }
 

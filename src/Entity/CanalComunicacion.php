@@ -29,7 +29,7 @@ class CanalComunicacion
      * @var Collection<int, Usuarios>
      */
     #[ORM\ManyToMany(targetEntity: Usuarios::class, mappedBy: 'canales')]
-    private Collection $usuarios;
+    private Collection $canalUsuario;
 
     /**
      * @var Collection<int, MiembroCanal>
@@ -45,7 +45,7 @@ class CanalComunicacion
 
     public function __construct()
     {
-        $this->usuarios = new ArrayCollection();
+        $this->canalUsuario = new ArrayCollection();
         $this->miembros = new ArrayCollection();
         $this->miembroCanals = new ArrayCollection();
     }
@@ -103,23 +103,23 @@ class CanalComunicacion
      */
     public function getUsuarios(): Collection
     {
-        return $this->usuarios;
+        return $this->canalUsuario;
     }
 
-    public function addUsuario(Usuarios $usuario): static
+    public function addUsuario(Usuarios $canalUsuario): static
     {
-        if (!$this->usuarios->contains($usuario)) {
-            $this->usuarios->add($usuario);
-            $usuario->addCanale($this);
+        if (!$this->canalUsuario->contains($canalUsuario)) {
+            $this->canalUsuario->add($canalUsuario);
+            $canalUsuario->addCanal($this);
         }
 
         return $this;
     }
 
-    public function removeUsuario(Usuarios $usuario): static
+    public function removeUsuario(Usuarios $canalUsuario): static
     {
-        if ($this->usuarios->removeElement($usuario)) {
-            $usuario->removeCanale($this);
+        if ($this->canalUsuario->removeElement($canalUsuario)) {
+            $canalUsuario->removeCanal($this);
         }
 
         return $this;
@@ -159,6 +159,7 @@ class CanalComunicacion
      * @return Collection<int, MiembroCanal>
      */
     public function getMiembroCanals(): Collection
+    
     {
         return $this->miembroCanals;
     }

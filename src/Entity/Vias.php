@@ -30,17 +30,8 @@ class Vias
     #[ORM\Column(nullable: true)]
     private ?int $totalAscensos = null;
 
-    #[ORM\ManyToOne(inversedBy: 'bloqueVias')]
-    private ?Bloques $bloques = null;
-
     #[ORM\ManyToOne(inversedBy: 'vias')]
-    private ?Bloques $viasBloque = null;
-
-    /**
-     * @var Collection<int, ascensos>
-     */
-    #[ORM\OneToMany(targetEntity: ascensos::class, mappedBy: 'vias')]
-    private Collection $viaAscensos;
+    private ?Bloques $viaBloque = null;
 
     /**
      * @var Collection<int, Comentarios>
@@ -57,12 +48,11 @@ class Vias
     /**
      * @var Collection<int, Ascensos>
      */
-    #[ORM\OneToMany(targetEntity: Ascensos::class, mappedBy: 'ascensosVia')]
+    #[ORM\OneToMany(targetEntity: Ascensos::class, mappedBy: 'via')]
     private Collection $ascensos;
 
     public function __construct()
     {
-        $this->viaAscensos = new ArrayCollection();
         $this->viaComentarios = new ArrayCollection();
         $this->viaFotos = new ArrayCollection();
         $this->ascensos = new ArrayCollection();
@@ -140,56 +130,16 @@ class Vias
         return $this;
     }
 
-    public function getBloques(): ?Bloques
+
+
+    public function getViaBloque(): ?Bloques
     {
-        return $this->bloques;
+        return $this->viaBloque;
     }
 
-    public function setBloques(?Bloques $bloques): static
+    public function setViaBloque(?Bloques $viaBloque): static
     {
-        $this->bloques = $bloques;
-
-        return $this;
-    }
-
-    public function getViasBloque(): ?Bloques
-    {
-        return $this->viasBloque;
-    }
-
-    public function setViasBloque(?Bloques $viasBloque): static
-    {
-        $this->viasBloque = $viasBloque;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ascensos>
-     */
-    public function getViaAscensos(): Collection
-    {
-        return $this->viaAscensos;
-    }
-
-    public function addViaAscenso(ascensos $viaAscenso): static
-    {
-        if (!$this->viaAscensos->contains($viaAscenso)) {
-            $this->viaAscensos->add($viaAscenso);
-            $viaAscenso->setVias($this);
-        }
-
-        return $this;
-    }
-
-    public function removeViaAscenso(ascensos $viaAscenso): static
-    {
-        if ($this->viaAscensos->removeElement($viaAscenso)) {
-            // set the owning side to null (unless already changed)
-            if ($viaAscenso->getVias() === $this) {
-                $viaAscenso->setVias(null);
-            }
-        }
+        $this->viaBloque = $viaBloque;
 
         return $this;
     }
@@ -266,7 +216,7 @@ class Vias
     {
         if (!$this->ascensos->contains($ascenso)) {
             $this->ascensos->add($ascenso);
-            $ascenso->setAscensosVia($this);
+            $ascenso->setVia($this);
         }
 
         return $this;
@@ -276,8 +226,8 @@ class Vias
     {
         if ($this->ascensos->removeElement($ascenso)) {
             // set the owning side to null (unless already changed)
-            if ($ascenso->getAscensosVia() === $this) {
-                $ascenso->setAscensosVia(null);
+            if ($ascenso->getVia() === $this) {
+                $ascenso->setVia(null);
             }
         }
 

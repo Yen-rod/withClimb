@@ -38,12 +38,6 @@ class Comentarios
     #[ORM\ManyToOne(inversedBy: 'tipoComentarios')]
     private ?TipoComentario $tipoComentario = null;
 
-    #[ORM\ManyToOne(inversedBy: 'comentariosUsuarios')]
-    private ?Usuarios $comentarioUsuarios = null;
-
-    #[ORM\ManyToOne(inversedBy: 'comentarios')]
-    private ?TipoComentario $comentarioTipoComentario = null;
-
     #[ORM\ManyToOne(inversedBy: 'viaComentarios')]
     private ?Vias $vias = null;
 
@@ -158,29 +152,6 @@ class Comentarios
         return $this;
     }
 
-    public function getComentarioUsuarios(): ?Usuarios
-    {
-        return $this->comentarioUsuarios;
-    }
-
-    public function setComentarioUsuarios(?Usuarios $comentarioUsuarios): static
-    {
-        $this->comentarioUsuarios = $comentarioUsuarios;
-
-        return $this;
-    }
-
-    public function getComentarioTipoComentario(): ?TipoComentario
-    {
-        return $this->comentarioTipoComentario;
-    }
-
-    public function setComentarioTipoComentario(?TipoComentario $comentarioTipoComentario): static
-    {
-        $this->comentarioTipoComentario = $comentarioTipoComentario;
-
-        return $this;
-    }
 
     public function getVias(): ?Vias
     {

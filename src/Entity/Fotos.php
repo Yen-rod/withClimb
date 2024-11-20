@@ -33,19 +33,13 @@ class Fotos
     private ?\DateTimeInterface $fechaSubida = null;
 
     #[ORM\ManyToOne(inversedBy: 'fotos')]
-    private ?Usuarios $usuarios = null;
+    private ?Usuarios $fotoUsuario = null;
 
     #[ORM\ManyToOne(inversedBy: 'viaFotos')]
     private ?Vias $vias = null;
 
     #[ORM\ManyToOne(inversedBy: 'tipofotoFotos')]
-    private ?TipoFoto $tipoFoto = null;
-
-    #[ORM\ManyToOne(inversedBy: 'fotosUsuario')]
-    private ?Usuarios $fotosUsuario = null;
-
-    #[ORM\ManyToOne(inversedBy: 'fotos')]
-    private ?TipoFoto $fotosTipoFoto = null;
+    private ?TipoFoto $fotoTipoFoto = null;
 
     #[ORM\ManyToOne(inversedBy: 'restauranteFotos')]
     private ?Restaurantes $restaurantes = null;
@@ -134,14 +128,14 @@ class Fotos
         return $this;
     }
 
-    public function getUsuarios(): ?Usuarios
+    public function getFotoUsuario(): ?Usuarios
     {
-        return $this->usuarios;
+        return $this->fotoUsuario;
     }
 
-    public function setUsuarios(?Usuarios $usuarios): static
+    public function setFotoUsuario(?Usuarios $fotoUsuario): static
     {
-        $this->usuarios = $usuarios;
+        $this->fotoUsuario = $fotoUsuario;
 
         return $this;
     }
@@ -158,38 +152,14 @@ class Fotos
         return $this;
     }
 
-    public function getTipoFoto(): ?TipoFoto
+    public function getFotoTipoFoto(): ?TipoFoto
     {
-        return $this->tipoFoto;
+        return $this->fotoTipoFoto;
     }
 
-    public function setTipoFoto(?TipoFoto $tipoFoto): static
+    public function setFotoTipoFoto(?TipoFoto $fotoTipoFoto): static
     {
-        $this->tipoFoto = $tipoFoto;
-
-        return $this;
-    }
-
-    public function getFotosUsuario(): ?Usuarios
-    {
-        return $this->fotosUsuario;
-    }
-
-    public function setFotosUsuario(?Usuarios $fotosUsuario): static
-    {
-        $this->fotosUsuario = $fotosUsuario;
-
-        return $this;
-    }
-
-    public function getFotosTipoFoto(): ?TipoFoto
-    {
-        return $this->fotosTipoFoto;
-    }
-
-    public function setFotosTipoFoto(?TipoFoto $fotosTipoFoto): static
-    {
-        $this->fotosTipoFoto = $fotosTipoFoto;
+        $this->fotoTipoFoto = $fotoTipoFoto;
 
         return $this;
     }

@@ -30,11 +30,8 @@ class Restaurantes
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $descripcion = null;
 
-    #[ORM\ManyToOne(inversedBy: 'zonaRestaurantes')]
-    private ?Zonas $zonas = null;
-
     #[ORM\ManyToOne(inversedBy: 'restaurantes')]
-    private ?Zonas $restaurantesZona = null;
+    private ?Zonas $zonaRestaurante = null;
 
     /**
      * @var Collection<int, Comentarios>
@@ -66,17 +63,6 @@ class Restaurantes
         return $this;
     }
 
-    public function getIdZonas(): ?int
-    {
-        return $this->idZonas;
-    }
-
-    public function setIdZonas(int $idZonas): static
-    {
-        $this->idZonas = $idZonas;
-
-        return $this;
-    }
 
     public function getNombre(): ?string
     {
@@ -126,36 +112,16 @@ class Restaurantes
         return $this;
     }
 
-    public function getZonas(): ?Zonas
+    public function getZonaRestaurante(): ?Zonas
     {
-        return $this->zonas;
+        return $this->zonaRestaurante;
     }
 
-    public function setZonas(?Zonas $zonas): static
+    public function setZonaRestaurante(?Zonas $zonaRestaurante): static
     {
-        $this->zonas = $zonas;
+        $this->zonaRestaurante = $zonaRestaurante;
 
         return $this;
-    }
-
-    public function getRestaurantesZona(): ?Zonas
-    {
-        return $this->restaurantesZona;
-    }
-
-    public function setRestaurantesZona(?Zonas $restaurantesZona): static
-    {
-        $this->restaurantesZona = $restaurantesZona;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Comentarios>
-     */
-    public function getRestauranteComentarios(): Collection
-    {
-        return $this->restauranteComentarios;
     }
 
     public function addRestauranteComentario(Comentarios $restauranteComentario): static

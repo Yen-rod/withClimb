@@ -24,18 +24,11 @@ class TipoFoto
     /**
      * @var Collection<int, Fotos>
      */
-    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'tipoFoto')]
-    private Collection $tipofotoFotos;
-
-    /**
-     * @var Collection<int, Fotos>
-     */
-    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'fotosTipoFoto')]
+    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'fotoTipoFoto')]
     private Collection $fotos;
 
     public function __construct()
     {
-        $this->tipofotoFotos = new ArrayCollection();
         $this->fotos = new ArrayCollection();
     }
 
@@ -78,16 +71,16 @@ class TipoFoto
     /**
      * @return Collection<int, Fotos>
      */
-    public function getTipofotoFotos(): Collection
+    public function getFotoTipoFoto(): Collection
     {
-        return $this->tipofotoFotos;
+        return $this->fotos;
     }
 
-    public function addTipofotoFoto(Fotos $tipofotoFoto): static
+    public function addTipofotoFoto(Fotos $foto): static
     {
-        if (!$this->tipofotoFotos->contains($tipofotoFoto)) {
-            $this->tipofotoFotos->add($tipofotoFoto);
-            $tipofotoFoto->setTipoFoto($this);
+        if (!$this->fotos->contains($foto)) {
+            $this->fotos->add($foto);
+            $foto->setFotoTipoFoto($this);
         }
 
         return $this;
@@ -95,43 +88,14 @@ class TipoFoto
 
     public function removeTipofotoFoto(Fotos $tipofotoFoto): static
     {
-        if ($this->tipofotoFotos->removeElement($tipofotoFoto)) {
+        if ($this->fotos->removeElement($tipofotoFoto)) {
             // set the owning side to null (unless already changed)
-            if ($tipofotoFoto->getTipoFoto() === $this) {
-                $tipofotoFoto->setTipoFoto(null);
+            if ($tipofotoFoto->getFotoTipoFoto() === $this) {
+                $tipofotoFoto->setFotoTipoFoto(null);
             }
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Fotos>
-     */
-    public function getFotos(): Collection
-    {
-        return $this->fotos;
-    }
-
-    public function addFoto(Fotos $foto): static
-    {
-        if (!$this->fotos->contains($foto)) {
-            $this->fotos->add($foto);
-            $foto->setFotosTipoFoto($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFoto(Fotos $foto): static
-    {
-        if ($this->fotos->removeElement($foto)) {
-            // set the owning side to null (unless already changed)
-            if ($foto->getFotosTipoFoto() === $this) {
-                $foto->setFotosTipoFoto(null);
-            }
-        }
-
-        return $this;
-    }
 }
