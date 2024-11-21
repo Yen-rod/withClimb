@@ -28,16 +28,17 @@ class Zonas
     private ?int $totalAscensos = null;
 
     /**
+     * @var Collection<int, Bloques>
+     */
+    #[ORM\OneToMany(targetEntity: Bloques::class, mappedBy: 'idZona')]
+    private Collection $bloques;
+    /**
      * @var Collection<int, Restaurantes>
      */
     #[ORM\OneToMany(targetEntity: Restaurantes::class, mappedBy: 'zonaRestaurante')]
     private Collection $restaurantes;
 
-    /**
-     * @var Collection<int, Bloques>
-     */
-    #[ORM\OneToMany(targetEntity: Bloques::class, mappedBy: 'bloqueZona')]
-    private Collection $bloques;
+
 
 
 
@@ -122,7 +123,7 @@ class Zonas
     {
         if (!$this->bloques->contains($bloque)) {
             $this->bloques->add($bloque);
-            $bloque->setBloqueZona($this);
+            $bloque->setIdZona($this);
         }
 
         return $this;
@@ -132,8 +133,8 @@ class Zonas
     {
         if ($this->bloques->removeElement($bloque)) {
             // set the owning side to null (unless already changed)
-            if ($bloque->getBloqueZona() === $this) {
-                $bloque->setBloqueZona(null);
+            if ($bloque->getIdZona() === $this) {
+                $bloque->setIdZona(null);
             }
         }
 

@@ -37,18 +37,18 @@ class Restaurantes
      * @var Collection<int, Comentarios>
      */
     #[ORM\OneToMany(targetEntity: Comentarios::class, mappedBy: 'restaurantes')]
-    private Collection $restauranteComentarios;
+    private Collection $comentarios;
 
     /**
      * @var Collection<int, Fotos>
      */
     #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'restaurantes')]
-    private Collection $restauranteFotos;
+    private Collection $fotos;
 
     public function __construct()
     {
-        $this->restauranteComentarios = new ArrayCollection();
-        $this->restauranteFotos = new ArrayCollection();
+        $this->comentarios = new ArrayCollection();
+        $this->fotos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,22 +124,22 @@ class Restaurantes
         return $this;
     }
 
-    public function addRestauranteComentario(Comentarios $restauranteComentario): static
+    public function addComentarios(Comentarios $comentarios): static
     {
-        if (!$this->restauranteComentarios->contains($restauranteComentario)) {
-            $this->restauranteComentarios->add($restauranteComentario);
-            $restauranteComentario->setRestaurantes($this);
+        if (!$this->comentarios->contains($comentarios)) {
+            $this->comentarios->add($comentarios);
+            $comentarios->setRestaurantes($this);
         }
 
         return $this;
     }
 
-    public function removeRestauranteComentario(Comentarios $restauranteComentario): static
+    public function removeComentarios(Comentarios $comentarios): static
     {
-        if ($this->restauranteComentarios->removeElement($restauranteComentario)) {
+        if ($this->comentarios->removeElement($comentarios)) {
             // set the owning side to null (unless already changed)
-            if ($restauranteComentario->getRestaurantes() === $this) {
-                $restauranteComentario->setRestaurantes(null);
+            if ($comentarios->getRestaurantes() === $this) {
+                $comentarios->setRestaurantes(null);
             }
         }
 
@@ -149,27 +149,27 @@ class Restaurantes
     /**
      * @return Collection<int, Fotos>
      */
-    public function getRestauranteFotos(): Collection
+    public function getFotos(): Collection
     {
-        return $this->restauranteFotos;
+        return $this->fotos;
     }
 
-    public function addRestauranteFoto(Fotos $restauranteFoto): static
+    public function fotos(Fotos $fotos): static
     {
-        if (!$this->restauranteFotos->contains($restauranteFoto)) {
-            $this->restauranteFotos->add($restauranteFoto);
-            $restauranteFoto->setRestaurantes($this);
+        if (!$this->fotos->contains($fotos)) {
+            $this->fotos->add($fotos);
+            $fotos->setRestaurantes($this);
         }
 
         return $this;
     }
 
-    public function removeRestauranteFoto(Fotos $restauranteFoto): static
+    public function removeFoto(Fotos $fotos): static
     {
-        if ($this->restauranteFotos->removeElement($restauranteFoto)) {
+        if ($this->fotos->removeElement($fotos)) {
             // set the owning side to null (unless already changed)
-            if ($restauranteFoto->getRestaurantes() === $this) {
-                $restauranteFoto->setRestaurantes(null);
+            if ($fotos->getRestaurantes() === $this) {
+                $fotos->setRestaurantes(null);
             }
         }
 

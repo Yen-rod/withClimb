@@ -25,29 +25,27 @@ class CanalComunicacion
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $fechaCreacion = null;
 
-    /**
-     * @var Collection<int, Usuarios>
-     */
+
+    #[ORM\OneToMany(targetEntity: UsuariosCanalComunicacion::class, mappedBy: 'idCanalComunicacion')]
+    private $usuariosCanalComunicacion;
+
+    /*
+     @var Collection<int, Usuarios>
     #[ORM\ManyToMany(targetEntity: Usuarios::class, mappedBy: 'canales')]
     private Collection $canalUsuario;
-
-    /**
-     * @var Collection<int, MiembroCanal>
-     */
-    #[ORM\OneToMany(targetEntity: MiembroCanal::class, mappedBy: 'canalComunicacion')]
+      @var Collection<int, MiembroCanal>
+    #[ORM\OneToMany(targetEntity: UsuariosCanalComunicacion::class, mappedBy: 'canalComunicacion')]
     private Collection $miembros;
-
-    /**
-     * @var Collection<int, MiembroCanal>
-     */
-    #[ORM\OneToMany(targetEntity: MiembroCanal::class, mappedBy: 'canal')]
+     @var Collection<int, MiembroCanal>
+    #[ORM\OneToMany(targetEntity: UsuariosCanalComunicacion::class, mappedBy: 'canal')]
     private Collection $miembroCanals;
+    */
+
 
     public function __construct()
     {
-        $this->canalUsuario = new ArrayCollection();
-        $this->miembros = new ArrayCollection();
-        $this->miembroCanals = new ArrayCollection();
+
+        $this->usuariosCanalComunicacion = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,87 +97,30 @@ class CanalComunicacion
     }
 
     /**
-     * @return Collection<int, Usuarios>
-     */
-    public function getUsuarios(): Collection
-    {
-        return $this->canalUsuario;
-    }
-
-    public function addUsuario(Usuarios $canalUsuario): static
-    {
-        if (!$this->canalUsuario->contains($canalUsuario)) {
-            $this->canalUsuario->add($canalUsuario);
-            $canalUsuario->addCanal($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUsuario(Usuarios $canalUsuario): static
-    {
-        if ($this->canalUsuario->removeElement($canalUsuario)) {
-            $canalUsuario->removeCanal($this);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, MiembroCanal>
      */
-    public function getMiembros(): Collection
-    {
-        return $this->miembros;
-    }
-
-    public function addMiembro(MiembroCanal $miembro): static
-    {
-        if (!$this->miembros->contains($miembro)) {
-            $this->miembros->add($miembro);
-            $miembro->setCanalComunicacion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMiembro(MiembroCanal $miembro): static
-    {
-        if ($this->miembros->removeElement($miembro)) {
-            // set the owning side to null (unless already changed)
-            if ($miembro->getCanalComunicacion() === $this) {
-                $miembro->setCanalComunicacion(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, MiembroCanal>
-     */
-    public function getMiembroCanals(): Collection
+    public function getUsuariosCanalComunicacion(): Collection
     
     {
-        return $this->miembroCanals;
+        return $this->usuariosCanalComunicacion;
     }
 
-    public function addMiembroCanal(MiembroCanal $miembroCanal): static
+    public function addUsuariosCanalComunicacion(UsuariosCanalComunicacion $usuariosCanalComunicacion): static
     {
-        if (!$this->miembroCanals->contains($miembroCanal)) {
-            $this->miembroCanals->add($miembroCanal);
-            $miembroCanal->setCanal($this);
+        if (!$this->usuariosCanalComunicacion->contains($usuariosCanalComunicacion)) {
+            $this->usuariosCanalComunicacion->add($usuariosCanalComunicacion);
+            $usuariosCanalComunicacion->setIdCanalComunicacion($this);
         }
 
         return $this;
     }
 
-    public function removeMiembroCanal(MiembroCanal $miembroCanal): static
+    public function removeUsuariosCanalComunicacion(UsuariosCanalComunicacion $usuariosCanalComunicacion): static
     {
-        if ($this->miembroCanals->removeElement($miembroCanal)) {
+        if ($this->usuariosCanalComunicacion->removeElement($usuariosCanalComunicacion)) {
             // set the owning side to null (unless already changed)
-            if ($miembroCanal->getCanal() === $this) {
-                $miembroCanal->setCanal(null);
+            if ($usuariosCanalComunicacion->getIdCanalComunicacion() === $this) {
+                $usuariosCanalComunicacion->setIdCanalComunicacion(null);
             }
         }
 

@@ -24,6 +24,9 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
+    #[ORM\Column(nullable: true, enumType: Genero::class)]
+    private ?Genero $genero = null;
+
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
@@ -36,56 +39,49 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    #[ORM\Column(nullable: true)]
-    private ?int $totalAscensos = null;
-
-    #[ORM\Column(nullable: true, enumType: Genero::class)]
-    private ?Genero $genero = null;
-
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Nivel::class)]
-    private ?array $nivelExperiencia = null;
-
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $fechaRegistro = null;
 
-    /**
-     * @var Collection<int, Comentarios>
-     */
-    #[ORM\OneToMany(targetEntity: Comentarios::class, mappedBy: 'comentarioUsuario')]
-    private Collection $comentarios;
+    #[ORM\Column(nullable: true)]
+    private ?int $totalAscensos = null;
+
 
     /**
      * @var Collection<int, Ascensos>
      */
-    #[ORM\OneToMany(targetEntity: Ascensos::class, mappedBy: 'ascensoUsuario')]
+    #[ORM\OneToMany(targetEntity: Ascensos::class, mappedBy: 'idUsuario')]
     private Collection $ascensos;
+
+    /**
+     * @var Collection<int, Comentarios>
+     */
+    #[ORM\OneToMany(targetEntity: Comentarios::class, mappedBy: 'idUsuario')]
+    private Collection $comentarios;
 
     /**
      * @var Collection<int, Fotos>
      */
-    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'fotoUsuario')]
+    #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'idUsuario')]
     private Collection $fotos;
 
-    /**
-     * @var Collection<int, CanalComunicacion>
-     */
+    #[ORM\OneToMany(targetEntity: UsuariosCanalComunicacion::class, mappedBy: 'idUsuarios')]
+    private $idCanalComunicacion;
+
+    /*
+     @var Collection<int, CanalComunicacion>
     #[ORM\ManyToMany(targetEntity: CanalComunicacion::class, inversedBy: 'canalUsuario')]
     private Collection $canales;
-
-    /**
-     * @var Collection<int, MiembroCanal>
-     */
+     @var Collection<int, MiembroCanal>
     #[ORM\OneToMany(targetEntity: MiembroCanal::class, mappedBy: 'miembroUsuario')]
     private Collection $miembrosCanal;
-
+    */
 
     public function __construct()
     {
-        $this->comentarios = new ArrayCollection();
         $this->ascensos = new ArrayCollection();
+        $this->comentarios = new ArrayCollection();
         $this->fotos = new ArrayCollection();
-        $this->canales = new ArrayCollection();
-        $this->miembrosCanal = new ArrayCollection();
+        $this->idCanalComunicacion = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,6 +107,21 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    
+    public function getGenero(): ?Genero
+    {
+        return $this->genero;
+    }
+
+    public function setGenero(?Genero $genero): static
+    {
+        $this->genero = $genero;
+
+        return $this;
+    }
+
+
 
     public function getEmail(): ?string
     {
@@ -138,6 +149,19 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    
+    public function getFechaRegistro(): ?\DateTimeInterface
+    {
+        return $this->fechaRegistro;
+    }
+
+    public function setFechaRegistro(\DateTimeInterface $fechaRegistro): static
+    {
+        $this->fechaRegistro = $fechaRegistro;
+
+        return $this;
+    }
+
 
     public function getTotalAscensos(): ?int
     {
@@ -151,44 +175,40 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getGenero(): ?Genero
-    {
-        return $this->genero;
-    }
-
-    public function setGenero(?Genero $genero): static
-    {
-        $this->genero = $genero;
-
-        return $this;
-    }
-
+    
     /**
-     * @return Nivel[]|null
+     * @return Collection<int, Ascensos>
      */
-    public function getNivelExperiencia(): ?array
+    public function getAscensos(): Collection
     {
-        return $this->nivelExperiencia;
+        return $this->ascensos;
     }
 
-    public function setNivelExperiencia(?array $nivelExperiencia): static
+    public function addAscenso(Ascensos $ascenso): static
     {
-        $this->nivelExperiencia = $nivelExperiencia;
+        if (!$this->ascensos->contains($ascenso)) {
+            $this->ascensos->add($ascenso);
+            $ascenso->setIdUsuario($this);
+            
+
+        }
 
         return $this;
     }
 
-    public function getFechaRegistro(): ?\DateTimeInterface
+    public function removeAscenso(Ascensos $ascenso): static
     {
-        return $this->fechaRegistro;
-    }
-
-    public function setFechaRegistro(\DateTimeInterface $fechaRegistro): static
-    {
-        $this->fechaRegistro = $fechaRegistro;
+        if ($this->ascensos->removeElement($ascenso)) {
+            // set the owning side to null (unless already changed)
+            if ($ascenso->getIdUsuario() === $this) {
+                $ascenso->setIdUsuario(null);
+            }
+        }
 
         return $this;
     }
+
+
 
     /**
      * @return Collection<int, Comentarios>
@@ -202,7 +222,7 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->comentarios->contains($comentario)) {
             $this->comentarios->add($comentario);
-            $comentario->setComentarioUsuario($this);
+            $comentario->setIdUsuario($this);
         }
 
         return $this;
@@ -212,46 +232,13 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->comentarios->removeElement($comentario)) {
             // set the owning side to null (unless already changed)
-            if ($comentario->getComentarioUsuario() === $this) {
-                $comentario->setComentarioUsuario(null);
+            if ($comentario->getIdUsuario() === $this) {
+                $comentario->getIdUsuario(null);
             }
         }
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, Ascensos>
-     */
-    public function getAscensos(): Collection
-    {
-        return $this->ascensos;
-    }
-
-    public function addAscenso(Ascensos $ascenso): static
-    {
-        if (!$this->ascensos->contains($ascenso)) {
-            $this->ascensos->add($ascenso);
-            $ascenso->setAscensoUsuario($this);
-            
-
-        }
-
-        return $this;
-    }
-
-    public function removeAscenso(Ascensos $ascenso): static
-    {
-        if ($this->ascensos->removeElement($ascenso)) {
-            // set the owning side to null (unless already changed)
-            if ($ascenso->getAscensoUsuario() === $this) {
-                $ascenso->setAscensoUsuario(null);
-            }
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Fotos>
      */
@@ -264,7 +251,7 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->fotos->contains($foto)) {
             $this->fotos->add($foto);
-            $foto->setFotoUsuario($this);
+            $foto->setIdUsuario($this);
         }
 
         return $this;
@@ -274,8 +261,8 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->fotos->removeElement($foto)) {
             // set the owning side to null (unless already changed)
-            if ($foto->getFotoUsuario() === $this) {
-                $foto->setFotoUsuario(null);
+            if ($foto->getIdUsuario() === $this) {
+                $foto->setIdUsuario(null);
             }
         }
 
@@ -283,53 +270,29 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, CanalComunicacion>
-     */
-    public function getCanales(): Collection
-    {
-        return $this->canales;
-    }
-
-    public function addCanal(CanalComunicacion $canal): static
-    {
-        if (!$this->canales->contains($canal)) {
-            $this->canales->add($canal);
-        }
-
-        return $this;
-    }
-
-    public function removeCanal(CanalComunicacion $canal): static
-    {
-        $this->canales->removeElement($canal);
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, MiembroCanal>
      */
-    public function getMiembrosCanal(): Collection
+    public function getIdCanalComunicacion(): Collection
     {
-        return $this->miembrosCanal;
+        return $this->idCanalComunicacion;
     }
 
-    public function addMiembrosCanal(MiembroCanal $miembrosCanal): static
+    public function addIdCanalComunicacion(UsuariosCanalComunicacion $idCanalComunicacion): static
     {
-        if (!$this->miembrosCanal->contains($miembrosCanal)) {
-            $this->miembrosCanal->add($miembrosCanal);
-            $miembrosCanal->setMiembroUsuario($this);
+        if (!$this->idCanalComunicacion->contains($idCanalComunicacion)) {
+            $this->idCanalComunicacion->add($idCanalComunicacion);
+            $idCanalComunicacion->setIdUsuarios($this);
         }
 
         return $this;
     }
 
-    public function removeMiembrosCanal(MiembroCanal $miembrosCanal): static
+    public function removeIdCanalComunicacion(UsuariosCanalComunicacion $idCanalComunicacion): static
     {
-        if ($this->miembrosCanal->removeElement($miembrosCanal)) {
+        if ($this->idCanalComunicacion->removeElement($idCanalComunicacion)) {
             // set the owning side to null (unless already changed)
-            if ($miembrosCanal->getMiembroUsuario() === $this) {
-                $miembrosCanal->setMiembroUsuario(null);
+            if ($idCanalComunicacion->getIdUsuarios() === $this) {
+                $idCanalComunicacion->setIdUsuarios(null);
             }
         }
 

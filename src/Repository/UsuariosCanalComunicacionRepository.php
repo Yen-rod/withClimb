@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\MiembroCanal;
+use App\Entity\UsuariosCanalComunicacion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<MiembroCanal>
+ * @extends ServiceEntityRepository<UsuariosCanalComunicacion>
  */
-class MiembroCanalRepository extends ServiceEntityRepository
+class UsuariosCanalComunicacionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MiembroCanal::class);
+        parent::__construct($registry, UsuariosCanalComunicacion::class);
     }
 
     //    /**

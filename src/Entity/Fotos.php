@@ -14,15 +14,6 @@ class Fotos
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $idUsuario = null;
-
-    #[ORM\Column]
-    private ?int $idTipoFoto = null;
-
-    #[ORM\Column]
-    private ?int $idFotografiado = null;
-
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
@@ -33,15 +24,15 @@ class Fotos
     private ?\DateTimeInterface $fechaSubida = null;
 
     #[ORM\ManyToOne(inversedBy: 'fotos')]
-    private ?Usuarios $fotoUsuario = null;
-
-    #[ORM\ManyToOne(inversedBy: 'viaFotos')]
-    private ?Vias $vias = null;
+    private ?Usuarios $idUsuario = null;
 
     #[ORM\ManyToOne(inversedBy: 'tipofotoFotos')]
     private ?TipoFoto $fotoTipoFoto = null;
 
-    #[ORM\ManyToOne(inversedBy: 'restauranteFotos')]
+    #[ORM\ManyToOne(inversedBy: 'fotos')]
+    private ?Vias $vias = null;
+
+    #[ORM\ManyToOne(inversedBy: 'fotos')]
     private ?Restaurantes $restaurantes = null;
 
     public function getId(): ?int
@@ -52,42 +43,6 @@ class Fotos
     public function setId(int $id): static
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getIdUsuario(): ?int
-    {
-        return $this->idUsuario;
-    }
-
-    public function setIdUsuario(int $idUsuario): static
-    {
-        $this->idUsuario = $idUsuario;
-
-        return $this;
-    }
-
-    public function getIdTipoFoto(): ?int
-    {
-        return $this->idTipoFoto;
-    }
-
-    public function setIdTipoFoto(int $idTipoFoto): static
-    {
-        $this->idTipoFoto = $idTipoFoto;
-
-        return $this;
-    }
-
-    public function getIdFotografiado(): ?int
-    {
-        return $this->idFotografiado;
-    }
-
-    public function setIdFotografiado(int $idFotografiado): static
-    {
-        $this->idFotografiado = $idFotografiado;
 
         return $this;
     }
@@ -128,14 +83,14 @@ class Fotos
         return $this;
     }
 
-    public function getFotoUsuario(): ?Usuarios
+    public function getIdUsuario(): ?Usuarios
     {
-        return $this->fotoUsuario;
+        return $this->idUsuario;
     }
 
-    public function setFotoUsuario(?Usuarios $fotoUsuario): static
+    public function setIdUsuario(?Usuarios $idUsuario): static
     {
-        $this->fotoUsuario = $fotoUsuario;
+        $this->idUsuario = $idUsuario;
 
         return $this;
     }

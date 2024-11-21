@@ -14,21 +14,16 @@ class Ascensos
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $idUsuario = null;
-
-    #[ORM\Column]
-    private ?int $idVia = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $fecha = null;
 
     #[ORM\ManyToOne(inversedBy: 'ascensos')]
-    private ?Usuarios $ascensoUsuario = null;
+    private ?Usuarios $idUsuario = null;
 
 
     #[ORM\ManyToOne(inversedBy: 'ascensos')]
-    private ?Vias $via = null;
+    private ?Vias $idVia = null;
 
     public function getId(): ?int
     {
@@ -42,29 +37,6 @@ class Ascensos
         return $this;
     }
 
-    public function getIdUsuario(): ?int
-    {
-        return $this->idUsuario;
-    }
-
-    public function setIdUsuario(int $idUsuario): static
-    {
-        $this->idUsuario = $idUsuario;
-
-        return $this;
-    }
-
-    public function getIdVia(): ?int
-    {
-        return $this->idVia;
-    }
-
-    public function setIdVia(int $idVia): static
-    {
-        $this->idVia = $idVia;
-
-        return $this;
-    }
 
     public function getFecha(): ?\DateTimeInterface
     {
@@ -78,28 +50,28 @@ class Ascensos
         return $this;
     }
 
-    public function getAscensoUsuario(): ?Usuarios
+    public function getIdUsuario(): ?Usuarios
     {
-        return $this->ascensoUsuario;
+        return $this->idUsuario;
     }
 
-    public function setAscensoUsuario(?Usuarios $ascensoUsuario): static
+    public function setIdUsuario(?Usuarios $idUsuario): static
     {
-        $this->ascensoUsuario = $ascensoUsuario;
+        $this->idUsuario = $idUsuario;
 
         return $this;
     }
 
 
 
-    public function getVia(): ?Vias
+    public function getIdVia(): ?Vias
     {
-        return $this->via;
+        return $this->idVia;
     }
 
-    public function setVia(?Vias $via): static
+    public function setIdVia(?Vias $idVia): static
     {
-        $this->via = $via;
+        $this->idVia = $idVia;
 
         return $this;
     }

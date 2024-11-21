@@ -14,15 +14,6 @@ class Comentarios
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $idUsuario = null;
-
-    #[ORM\Column]
-    private ?int $idTipoComentario = null;
-
-    #[ORM\Column]
-    private ?int $idComentado = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $comentario = null;
 
@@ -33,6 +24,19 @@ class Comentarios
     private ?\DateTimeInterface $fecha = null;
 
     #[ORM\ManyToOne(inversedBy: 'comentarios')]
+    private ?Usuarios $idUsuario = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comentarios')]
+    private ?TipoComentario $idTipoComentario = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comentarios')]
+    private ?Vias $vias = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comentarios')]
+    private ?Restaurantes $restaurantes = null;
+
+    /* 
+    #[ORM\ManyToOne(inversedBy: 'comentarios')]
     private ?Usuarios $comentarioUsuario = null;
 
     #[ORM\ManyToOne(inversedBy: 'tipoComentarios')]
@@ -40,9 +44,7 @@ class Comentarios
 
     #[ORM\ManyToOne(inversedBy: 'viaComentarios')]
     private ?Vias $vias = null;
-
-    #[ORM\ManyToOne(inversedBy: 'restauranteComentarios')]
-    private ?Restaurantes $restaurantes = null;
+    */
 
     public function getId(): ?int
     {
@@ -52,42 +54,6 @@ class Comentarios
     public function setId(int $id): static
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getIdUsuario(): ?int
-    {
-        return $this->idUsuario;
-    }
-
-    public function setIdUsuario(int $idUsuario): static
-    {
-        $this->idUsuario = $idUsuario;
-
-        return $this;
-    }
-
-    public function getIdTipoComentario(): ?int
-    {
-        return $this->idTipoComentario;
-    }
-
-    public function setIdTipoComentario(int $idTipoComentario): static
-    {
-        $this->idTipoComentario = $idTipoComentario;
-
-        return $this;
-    }
-
-    public function getIdComentado(): ?int
-    {
-        return $this->idComentado;
-    }
-
-    public function setIdComentado(int $idComentado): static
-    {
-        $this->idComentado = $idComentado;
 
         return $this;
     }
@@ -128,32 +94,32 @@ class Comentarios
         return $this;
     }
 
-    public function getComentarioUsuario(): ?Usuarios
+    public function getIdUsuario(): ?Usuarios
     {
-        return $this->comentarioUsuario;
+        return $this->idUsuario;
     }
 
-    public function setComentarioUsuario(?Usuarios $comentarioUsuario): static
+    public function setIdUsuario(?Usuarios $idUsuario): static
     {
-        $this->comentarioUsuario = $comentarioUsuario;
+        $this->idUsuario = $idUsuario;
 
         return $this;
     }
 
-    public function getTipoComentario(): ?TipoComentario
+    public function getIdTipoComentario(): ?TipoComentario
     {
-        return $this->tipoComentario;
+        return $this->idTipoComentario;
     }
 
-    public function setTipoComentario(?TipoComentario $tipoComentario): static
+    public function setIdTipoComentario(?TipoComentario $idTipoComentario): static
     {
-        $this->tipoComentario = $tipoComentario;
+        $this->idTipoComentario = $idTipoComentario;
 
         return $this;
     }
 
-
-    public function getVias(): ?Vias
+    
+    public function getvias(): ?Vias
     {
         return $this->vias;
     }
@@ -167,7 +133,7 @@ class Comentarios
 
     public function getRestaurantes(): ?Restaurantes
     {
-        return $this->restaurantes;
+        return $this->vias;
     }
 
     public function setRestaurantes(?Restaurantes $restaurantes): static
@@ -176,4 +142,5 @@ class Comentarios
 
         return $this;
     }
+
 }

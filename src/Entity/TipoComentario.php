@@ -81,7 +81,7 @@ class TipoComentario
     {
         if (!$this->comentarios->contains($comentario)) {
             $this->comentarios->add($comentario);
-            $comentario->setTipoComentario($this);
+            $comentario->setIdTipoComentario($this);
         }
 
         return $this;
@@ -91,8 +91,8 @@ class TipoComentario
     {
         if ($this->comentarios->removeElement($comentario)) {
             // set the owning side to null (unless already changed)
-            if ($comentario->getTipoComentario() === $this) {
-                $comentario->setTipoComentario(null);
+            if ($comentario->getIdTipoComentario() === $this) {
+                $comentario->setIdTipoComentario(null);
             }
         }
 

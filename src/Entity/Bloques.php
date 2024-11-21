@@ -15,22 +15,23 @@ class Bloques
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $idZona = null;
-
     #[ORM\Column(length: 100)]
     private ?string $nombre = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $descripcion = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $totalAscensos = null;
+
+
     #[ORM\ManyToOne(inversedBy: 'bloques')]
-    private ?Zonas $bloqueZona = null;
+    private ?Zonas $idZona = null;
 
     /**
      * @var Collection<int, Vias>
      */
-    #[ORM\OneToMany(targetEntity: Vias::class, mappedBy: 'viaBloque')]
+    #[ORM\OneToMany(targetEntity: Vias::class, mappedBy: 'idBloque')]
     private Collection $vias;
 
     public function __construct()
@@ -50,17 +51,6 @@ class Bloques
         return $this;
     }
 
-    public function getIdZona(): ?int
-    {
-        return $this->idZona;
-    }
-
-    public function setIdZona(int $idZona): static
-    {
-        $this->idZona = $idZona;
-
-        return $this;
-    }
 
     public function getNombre(): ?string
     {
@@ -86,14 +76,27 @@ class Bloques
         return $this;
     }
 
-    public function getBloqueZona(): ?Zonas
+    public function getTotalAscensos(): ?int
     {
-        return $this->bloqueZona;
+        return $this->totalAscensos;
     }
 
-    public function setBloqueZona(?Zonas $bloqueZona): static
+    public function setTotalAscensos(?int $totalAscensos): static
     {
-        $this->bloqueZona = $bloqueZona;
+        $this->totalAscensos = $totalAscensos;
+
+        return $this;
+    }
+
+
+    public function getIdZona(): ?Zonas
+    {
+        return $this->idZona;
+    }
+
+    public function setIdZona(?Zonas $idZona): static
+    {
+        $this->idZona = $idZona;
 
         return $this;
     }
@@ -111,7 +114,7 @@ class Bloques
     {
         if (!$this->vias->contains($via)) {
             $this->vias->add($via);
-            $via->setViaBloque($this);
+            $via->setIdBloque($this);
         }
 
         return $this;
@@ -121,8 +124,8 @@ class Bloques
     {
         if ($this->vias->removeElement($via)) {
             // set the owning side to null (unless already changed)
-            if ($via->getViaBloque() === $this) {
-                $via->setViaBloque(null);
+            if ($via->getIdBloque() === $this) {
+                $via->setIdBloque(null);
             }
         }
 

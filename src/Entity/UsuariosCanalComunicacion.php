@@ -2,20 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\MiembroCanalRepository;
+use App\Repository\UsuariosCanalComunicacionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: MiembroCanalRepository::class)]
-class MiembroCanal
+#[ORM\Entity(repositoryClass: UsuariosCanalComunicacionRepository::class)]
+#[ORM\Table(name: 'usuarios_canal_comunicacion')]
+class UsuariosCanalComunicacion
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column]
-    private ?int $idUsuario = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $fechaUnion = null;
@@ -23,6 +21,18 @@ class MiembroCanal
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $rol = null;
 
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: Usuarios::class, inversedBy: 'usuariosCanalComunicacion')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $idUsuarios;
+
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: CanalComunicacion::class, inversedBy: 'usuariosCanalComunicacion')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $idCanalComunicacion;
+
+
+    /*
     #[ORM\ManyToOne(inversedBy: 'miembrosCanal')]
     private ?Usuarios $miembroUsuario = null;
 
@@ -31,6 +41,7 @@ class MiembroCanal
 
     #[ORM\ManyToOne(inversedBy: 'miembroCanals')]
     private ?CanalComunicacion $canal = null;
+    */
 
     public function getId(): ?int
     {
@@ -40,18 +51,6 @@ class MiembroCanal
     public function setId(int $id): static
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getIdUsuario(): ?int
-    {
-        return $this->idUsuario;
-    }
-
-    public function setIdUsuario(int $idUsuario): static
-    {
-        $this->idUsuario = $idUsuario;
 
         return $this;
     }
@@ -80,39 +79,29 @@ class MiembroCanal
         return $this;
     }
 
-    public function getMiembroUsuario(): ?Usuarios
+    public function getIdUsuarios(): ?Usuarios
     {
-        return $this->miembroUsuario;
+        return $this->idUsuarios;
     }
 
-    public function setMiembroUsuario(?Usuarios $miembroUsuario): static
+    public function setIdUsuarios(?Usuarios $idUsuarios): static
     {
-        $this->miembroUsuario = $miembroUsuario;
+        $this->idUsuarios = $idUsuarios;
 
         return $this;
     }
 
-    public function getCanalComunicacion(): ?CanalComunicacion
+    public function getIdCanalComunicacion(): ?CanalComunicacion
     {
-        return $this->canalComunicacion;
+        return $this->idCanalComunicacion;
     }
 
-    public function setCanalComunicacion(?CanalComunicacion $canalComunicacion): static
+    public function setIdCanalComunicacion(?CanalComunicacion $idCanalComunicacion): static
     {
-        $this->canalComunicacion = $canalComunicacion;
+        $this->idCanalComunicacion = $idCanalComunicacion;
 
         return $this;
     }
 
-    public function getCanal(): ?CanalComunicacion
-    {
-        return $this->canal;
-    }
 
-    public function setCanal(?CanalComunicacion $canal): static
-    {
-        $this->canal = $canal;
-
-        return $this;
-    }
 }
