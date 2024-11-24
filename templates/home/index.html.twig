@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WithClimb - Tu comunidad de escalada</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+<!-- Navbar -->
+<nav class="fixed top-0 w-full bg-white shadow-md z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex-shrink-0 flex items-center">
+                <span class="text-2xl font-bold text-green-600">WithClimb</span>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-center space-x-4">
+                    <a href="#inicio" class="text-gray-700 hover:text-orange-500 px-3 py-2">Inicio</a>
+                    <a href="#zonas" class="text-gray-700 hover:text-orange-500 px-3 py-2">Zonas</a>
+                    <a href="#comunidad" class="text-gray-700 hover:text-orange-500 px-3 py-2">Comunidad</a>
+                    <a href="#contacto" class="text-gray-700 hover:text-orange-500 px-3 py-2">Contacto</a>
+                    <button class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">
+                        Iniciar Sesión
+                    </button>
+                </div>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+            <a href="#inicio" class="block text-gray-700 hover:text-orange-500 px-3 py-2">Inicio</a>
+            <a href="#zonas" class="block text-gray-700 hover:text-orange-500 px-3 py-2">Zonas</a>
+            <a href="#comunidad" class="block text-gray-700 hover:text-orange-500 px-3 py-2">Comunidad</a>
+            <a href="#contacto" class="block text-gray-700 hover:text-orange-500 px-3 py-2">Contacto</a>
+            <button class="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 mt-2">
+                Iniciar Sesión
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section with Carousel -->
+<div class="relative h-screen pt-16" id="inicio">
+    <div class="carousel relative h-full overflow-hidden">
+        <div class="carousel-slides flex h-full transition-transform duration-500">
+            <div class="carousel-slide min-w-full h-full relative">
+                <img src="/api/placeholder/1920/1080" alt="Escalada en roca" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                    <div class="text-center text-white px-4">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-4">Descubre tu próxima aventura</h1>
+                        <p class="text-xl md:text-2xl mb-8">Encuentra las mejores rutas de escalada en la Comunidad de Madrid</p>
+                        <button class="bg-green-600 text-white px-8 py-3 rounded-lg text-lg hover:bg-green-700 transition-colors">
+                            Explorar Rutas
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide min-w-full h-full relative">
+                <img src="/api/placeholder/1920/1080" alt="Comunidad escaladora" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                    <div class="text-center text-white px-4">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-4">Únete a la comunidad</h1>
+                        <p class="text-xl md:text-2xl mb-8">Conecta con otros escaladores y comparte experiencias</p>
+                        <button class="bg-orange-500 text-white px-8 py-3 rounded-lg text-lg hover:bg-orange-600 transition-colors">
+                            Unirse Ahora
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full">
+            ←
+        </button>
+        <button class="carousel-next absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full">
+            →
+        </button>
+    </div>
+</div>
+
+<!-- Zonas Destacadas -->
+<section id="zonas" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Zonas Destacadas</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <img src="/api/placeholder/400/300" alt="La Pedriza" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2">La Pedriza</h3>
+                    <p class="text-gray-600 mb-4">El paraíso del boulder y la escalada tradicional en Madrid.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-green-600 font-semibold">124 vías</span>
+                        <button class="text-orange-500 hover:text-orange-600">Ver más →</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Repite para otras zonas -->
+        </div>
+    </div>
+</section>
+
+<!-- Comunidad -->
+<section id="comunidad" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Nuestra Comunidad</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex items-start space-x-4">
+                    <img src="/api/placeholder/64/64" alt="Usuario" class="w-12 h-12 rounded-full">
+                    <div>
+                        <h3 class="font-semibold">Ana García</h3>
+                        <p class="text-gray-600 text-sm">Escaladora desde 2018</p>
+                        <p class="mt-2">"Una comunidad increíble para encontrar nuevas rutas y compañeros de escalada."</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Repite para otros testimonios -->
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">WithClimb</h3>
+                <p class="text-gray-400">Tu comunidad de escalada en Madrid</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-4">Enlaces</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-400 hover:text-white">Sobre nosotros</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white">Zonas</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white">Comunidad</a></li>
+                </ul>
+            </div>
+            <!-- Repite para otras columnas -->
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // Carousel functionality
+    const carousel = document.querySelector('.carousel-slides');
+    const slides = document.querySelectorAll('.carousel-slide');
+    const prevButton = document.querySelector('.carousel-prev');
+    const nextButton = document.querySelector('.carousel-next');
+    let currentSlide = 0;
+
+    function updateCarousel() {
+        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+
+    prevButton.addEventListener('click', () => {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        updateCarousel();
+    });
+
+    nextButton.addEventListener('click', () => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        updateCarousel();
+    });
+
+    // Auto-advance carousel
+    setInterval(() => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        updateCarousel();
+    }, 5000);
+</script>
+</body>
+</html>
