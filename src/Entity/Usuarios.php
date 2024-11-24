@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\Genero;
-use App\Enum\Nivel;
 use App\Repository\UsuariosRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,26 +14,31 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const GENERO_HOMBRE = '1';
+    public const GENERO_MUJER = '2';
+    public const NIVEL_USUARIO_PRINCIPIANTE = '1';
+    public const NIVEL_USUARIO_INTERMEDIO = '2';
+    public const NIVEL_USUARIO_AVANZADO = '3';
+    public const NIVEL_USUARIO_EXPERTO = '4';
+
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 55)]
     private ?string $nombre = null;
-
-    #[ORM\Column(nullable: true, enumType: Genero::class)]
-    private ?Genero $genero = null;
-
+    #[ORM\Column(length: 1)]
+    private string $genero = '';
+    #[ORM\Column(length: 1)]
+    private string $nivel = '';
     #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    private string $email = '';
+    #[ORM\Column(length: 255)]
+    private string $password = '';
 
-    #[ORM\Column(length: 50)]
-    private ?string $password = null;
 
-     /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
@@ -64,24 +67,13 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'idUsuario')]
     private Collection $fotos;
 
-    #[ORM\OneToMany(targetEntity: UsuariosCanalComunicacion::class, mappedBy: 'idUsuarios')]
-    private $idCanalComunicacion;
-
-    /*
-     @var Collection<int, CanalComunicacion>
-    #[ORM\ManyToMany(targetEntity: CanalComunicacion::class, inversedBy: 'canalUsuario')]
-    private Collection $canales;
-     @var Collection<int, MiembroCanal>
-    #[ORM\OneToMany(targetEntity: MiembroCanal::class, mappedBy: 'miembroUsuario')]
-    private Collection $miembrosCanal;
-    */
 
     public function __construct()
     {
         $this->ascensos = new ArrayCollection();
         $this->comentarios = new ArrayCollection();
         $this->fotos = new ArrayCollection();
-        $this->idCanalComunicacion = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -109,21 +101,19 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     
-    public function getGenero(): ?Genero
+    public function getGenero(): string
     {
         return $this->genero;
     }
 
-    public function setGenero(?Genero $genero): static
+    public function setGenero(string $genero): static
     {
         $this->genero = $genero;
 
         return $this;
     }
 
-
-
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -134,10 +124,8 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
-    public function getPassword(): ?string
+
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -163,19 +151,18 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getTotalAscensos(): ?int
+    public function getTotalAscensos(): int
     {
         return $this->totalAscensos;
     }
 
-    public function setTotalAscensos(?int $totalAscensos): static
+    public function setTotalAscensos(int $totalAscensos): static
     {
         $this->totalAscensos = $totalAscensos;
 
         return $this;
     }
 
-    
     /**
      * @return Collection<int, Ascensos>
      */
@@ -208,8 +195,6 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
-
     /**
      * @return Collection<int, Comentarios>
      */
@@ -218,27 +203,6 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->comentarios;
     }
 
-    public function addComentario(Comentarios $comentario): static
-    {
-        if (!$this->comentarios->contains($comentario)) {
-            $this->comentarios->add($comentario);
-            $comentario->setIdUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComentario(Comentarios $comentario): static
-    {
-        if ($this->comentarios->removeElement($comentario)) {
-            // set the owning side to null (unless already changed)
-            if ($comentario->getIdUsuario() === $this) {
-                $comentario->getIdUsuario(null);
-            }
-        }
-
-        return $this;
-    }
     /**
      * @return Collection<int, Fotos>
      */
@@ -269,36 +233,6 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, MiembroCanal>
-     */
-    public function getIdCanalComunicacion(): Collection
-    {
-        return $this->idCanalComunicacion;
-    }
-
-    public function addIdCanalComunicacion(UsuariosCanalComunicacion $idCanalComunicacion): static
-    {
-        if (!$this->idCanalComunicacion->contains($idCanalComunicacion)) {
-            $this->idCanalComunicacion->add($idCanalComunicacion);
-            $idCanalComunicacion->setIdUsuarios($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdCanalComunicacion(UsuariosCanalComunicacion $idCanalComunicacion): static
-    {
-        if ($this->idCanalComunicacion->removeElement($idCanalComunicacion)) {
-            // set the owning side to null (unless already changed)
-            if ($idCanalComunicacion->getIdUsuarios() === $this) {
-                $idCanalComunicacion->setIdUsuarios(null);
-            }
-        }
-
-        return $this;
-    }
-
     
     /**
      * @see UserInterface
@@ -314,9 +248,6 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;

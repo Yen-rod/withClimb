@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FotoRepository::class)]
 class Fotos
 {
+    public const TYPE_PHOTO_RESTAURANT = 1;
+    public const TYPE_PHOTO_VIA = 2;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

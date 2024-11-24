@@ -39,15 +39,23 @@ class Authenticator extends AbstractLoginFormAuthenticator
         );
     }
 
+    /**
+     * @throws \Exception
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
 
-        // For example:
-         return new RedirectResponse($this->urlGenerator->generate('app_dashboard'));
-        
+        if(in_array('ROLE_USER', $token->getRoleNames())){
+            return new RedirectResponse($this->urlGenerator->generate('usuarios_perfil'));
+        } else if(in_array('ROLE_ADMIN', $token->getRoleNames())){
+            return new RedirectResponse($this->urlGenerator->generate('app_dashboard'));
+        }
+
+        throw new \Exception('No se pudo redirigir al usuario');
+
     }
 
     protected function getLoginUrl(Request $request): string
