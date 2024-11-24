@@ -3,175 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vista de Usuario</title>
+    <title>Profile Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    container: {
+                        center: true,
+                        padding: '1rem'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body class="bg-gray-100">
-    <div class="container mx-auto p-4 max-w-7xl">
-        <!-- Panel Principal con fondo de imagen -->
-        <div class="relative min-h-[500px] mb-6">
-            <!-- Capa de fondo con imagen -->
-            <div class="absolute inset-0 z-0">
-                <img src="{{ asset('assets/images/view-young-person-rock-climbing-practicing-bouldering-training.jpg') }}"
-                     alt="Fondo de montaña" 
-                     class="w-full h-full object-cover rounded-lg">
-                <!-- Overlay semi-transparente -->
-                <div class="absolute inset-0 bg-white/10 backdrop-blur-sm rounded-lg"></div>
+<!-- Navbar fixed -->
+<div class="fixed top-0 left-0 right-0 z-50">
+    <header class="bg-black/90 backdrop-blur-sm text-white">
+        <nav class="container mx-auto flex justify-between items-center h-16 px-4">
+            <!-- Logo y búsqueda -->
+            <div class="flex items-center gap-4">
+                <div class="text-2xl font-bold">27 CRAGS</div>
+                <div class="relative hidden md:block">
+                    <input type="text"
+                           placeholder="Search Areas, Crags, Routes etc."
+                           class="w-64 bg-gray-800 text-sm rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
             </div>
 
-            <!-- Contenido del panel -->
-            <div class="relative z-10 bg-transparent p-6 md:p-8 lg:p-10 min-h-[500px] rounded-lg">
-                <div class="flex flex-col md:flex-row justify-between items-start gap-6">
-                    <!-- Columna izquierda - Buscador -->
-                    <div class="w-full md:w-2/3">
-                        <div class="relative mb-6">
-                            <input type="text" 
-                                   placeholder="BUSCADOR VIAS" 
-                                   class="w-full p-4 bg-white/70 backdrop-blur-sm border border-gray-300 rounded-lg 
-                                          focus:ring-2 focus:ring-green-200 focus:border-green-400 outline-none
-                                          shadow-lg transition-all duration-300
-                                          placeholder-gray-500">
-                            <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
-                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
+            <!-- Menú derecho (desktop) -->
+            <div class="hidden md:flex items-center gap-4">
+                <!-- Notificaciones -->
+                <div class="relative group">
+                    <button class="relative p-2 hover:bg-gray-800 rounded-lg transition-colors">
+                        <span class="absolute -top-1 -right-1 bg-blue-500 text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </button>
+                    <!-- Dropdown Notificaciones -->
+                    <div class="hidden group-hover:block absolute right-0 mt-2 w-80 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200 py-2">
+                        <div class="px-4 py-2 font-medium border-b border-gray-200">Notifications</div>
+                        <div class="max-h-96 overflow-y-auto">
+                            <a href="#" class="block px-4 py-3 hover:bg-gray-50">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <img src="/api/placeholder/40/40" class="h-10 w-10 rounded-full">
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium">New route added</p>
+                                        <p class="text-xs text-gray-500">2 minutes ago</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <!-- Más notificaciones aquí -->
                         </div>
                     </div>
+                </div>
 
-                    <!-- Columna derecha - Avatar Dropdown -->
-                    <div class="w-full md:w-1/3 flex justify-end">
-                        <div class="relative">
-                            <button id="avatarButton" 
-                                    class="flex items-center space-x-3 focus:outline-none" 
-                                    aria-expanded="false"
-                                    aria-haspopup="true">
-                                <img src="https://media.lordicon.com/icons/wired/flat/269-avatar-female.svg" 
-                                     alt="Avatar de usuario" 
-                                     class="rounded-full w-12 h-12 border-2 border-green-100 hover:border-green-200">
-                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
+                <!-- Usuario Dropdown -->
+                <div class="relative group">
+                    <button class="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg transition-colors">
+                        <img src="/api/placeholder/32/32" alt="Avatar" class="w-8 h-8 rounded-full">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200">
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <p class="text-sm font-medium">Roberto Manchado</p>
+                            <p class="text-xs text-gray-500">roberto@email.com</p>
+                        </div>
+                        <div class="py-2">
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-50">Help</a>
+                            <div class="border-t border-gray-200"></div>
+                            <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Sign out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <!-- Menú Dropdown -->
-                            <div id="avatarDropdown" 
-                                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 hidden z-50"
-                                 role="menu">
-                                <a href="#" 
-                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-                                   role="menuitem">
-                                    <div class="flex items-center space-x-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                        <span>Configuración</span>
-                                    </div>
-                                </a>
-                                <a href="#" 
-                                   class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-800"
-                                   role="menuitem">
-                                    <div class="flex items-center space-x-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                        </svg>
-                                        <span>Salir del sistema</span>
-                                    </div>
-                                </a>
-                            </div>
+            <!-- Botón menú móvil -->
+            <div class="md:hidden flex items-center gap-4">
+                <button class="relative p-2">
+                    <span class="absolute -top-1 -right-1 bg-blue-500 text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button id="mobile-menu-button" class="p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-4 pt-2 pb-4 space-y-3 bg-black/90 backdrop-blur-sm">
+                <div class="relative">
+                    <input type="text"
+                           placeholder="Search Areas, Crags, Routes etc."
+                           class="w-full bg-gray-800 text-sm rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div class="border-t border-gray-700 pt-3">
+                    <div class="flex items-center px-3 py-2">
+                        <img src="/api/placeholder/32/32" alt="Avatar" class="w-8 h-8 rounded-full">
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-white">Roberto Manchado</p>
+                            <p class="text-xs text-gray-400">roberto@email.com</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 space-y-1">
+                        <a href="#" class="block px-3 py-2 text-white hover:bg-gray-800 rounded-lg">Profile</a>
+                        <a href="#" class="block px-3 py-2 text-white hover:bg-gray-800 rounded-lg">Settings</a>
+                        <a href="#" class="block px-3 py-2 text-white hover:bg-gray-800 rounded-lg">Help</a>
+                        <a href="#" class="block px-3 py-2 text-red-400 hover:bg-gray-800 rounded-lg">Sign out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
+
+<div class="mt-16">
+    <!-- Hero section con gradiente -->
+    <div class="relative h-96 bg-gradient-to-b from-gray-400 to-gray-600">
+        <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/50">
+            <div class="container mx-auto flex items-end gap-6">
+                <img src="/api/placeholder/160/160" alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-white shadow-lg">
+                <div class="text-white mb-4">
+                    <h1 class="text-4xl font-bold mb-2">Roberto Manchado</h1>
+                    <p class="text-sm opacity-90">has visited and listed 2 crags</p>
+                    <div class="flex gap-8 mt-4">
+                        <div>
+                            <div class="text-sm font-medium opacity-90">FOLLOWERS</div>
+                            <div class="text-xl font-bold">0</div>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium opacity-90">FOLLOWING</div>
+                            <div class="text-xl font-bold">0</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Navegación -->
-        <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
-            <nav class="flex space-x-4">
-                <button class="px-4 py-2 text-green-800 hover:bg-green-50 rounded-lg font-medium transition-colors">
-                    Ascensos
-                </button>
-                <button class="px-4 py-2 text-green-800 hover:bg-green-50 rounded-lg font-medium transition-colors">
-                    Configuración
-                </button>
-            </nav>
-        </div>
-
-        <!-- Tabla de Ascensos -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <h2 class="text-xl font-semibold p-4 bg-green-50 text-green-800">Listado ascensos</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-green-50">
-                            <th class="px-6 py-3 text-left text-gray-700">ID</th>
-                            <th class="px-6 py-3 text-left text-gray-700">Ascenso</th>
-                            <th class="px-6 py-3 text-right text-gray-700">Editar</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">1</td>
-                            <td class="px-6 py-4">Ascenso Ejemplo 1</td>
-                            <td class="px-6 py-4 text-right">
-                                <button class="text-green-600 hover:text-green-800 transition-colors">
-                                    Editar
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">2</td>
-                            <td class="px-6 py-4">Ascenso Ejemplo 2</td>
-                            <td class="px-6 py-4 text-right">
-                                <button class="text-green-600 hover:text-green-800 transition-colors">
-                                    Editar
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
-    <script>
-        // Dropdown functionality
-        const avatarButton = document.getElementById('avatarButton');
-        const avatarDropdown = document.getElementById('avatarDropdown');
+    <!-- Navegación de tabs -->
+    <nav class="bg-white border-b sticky top-16 z-40">
+        <div class="container mx-auto">
+            <ul class="flex" id="tabList">
+                <li class="py-4 px-6 font-medium cursor-pointer border-b-2 border-transparent hover:text-yellow-500 transition-colors">ASCENTS</li>
+                <li class="py-4 px-6 font-medium cursor-pointer border-b-2 border-transparent hover:text-yellow-500 transition-colors">PHOTOS</li>
 
-        function toggleDropdown() {
-            const isExpanded = avatarButton.getAttribute('aria-expanded') === 'true';
-            avatarButton.setAttribute('aria-expanded', !isExpanded);
-            avatarDropdown.classList.toggle('hidden');
-        }
+            </ul>
+        </div>
+    </nav>
 
-        avatarButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleDropdown();
+    <!-- Contenido principal -->
+    <main class="container mx-auto py-8 px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Feed -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex items-start gap-4">
+                        <img src="/api/placeholder/48/48" alt="User Avatar" class="w-12 h-12 rounded-full">
+                        <div class="flex-1">
+                            <div class="font-medium">
+                                Roberto Manchado · <span class="text-gray-500 text-sm">7 hours ago</span>
+                            </div>
+                            <div class="text-gray-600">updated his or her to-do list</div>
+                            <div class="text-gray-800 mt-2">- El caminito del tren 7c+</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 mt-4 pt-4 border-t">
+                        <button class="flex items-center gap-2 text-gray-500 hover:text-gray-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                            <span>Like</span>
+                        </button>
+                        <button class="flex items-center gap-2 text-gray-500 hover:text-gray-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            <span>Comment</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-bold mb-4">PHOTOS SHARED</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <img src="/api/placeholder/120/120" alt="Shared photo" class="w-full aspect-square object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejo de tabs
+        const tabs = document.querySelectorAll('#tabList li');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => {
+                    t.classList.remove('border-yellow-500', 'text-yellow-500');
+                    t.classList.add('border-transparent');
+                });
+                this.classList.add('border-yellow-500', 'text-yellow-500');
+                this.classList.remove('border-transparent');
+            });
         });
 
-        document.addEventListener('click', (e) => {
-            if (!avatarButton.contains(e.target)) {
-                avatarButton.setAttribute('aria-expanded', 'false');
-                avatarDropdown.classList.add('hidden');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            const icon = this.querySelector('svg');
+            icon.style.transform = mobileMenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+            icon.style.transition = 'transform 0.3s ease';
+        });
+
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', function(event) {
+            if (!mobileMenu.contains(event.target) && !mobileMenuButton.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                const icon = mobileMenuButton.querySelector('svg');
+                icon.style.transform = 'rotate(0deg)';
             }
         });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                avatarButton.setAttribute('aria-expanded', 'false');
-                avatarDropdown.classList.add('hidden');
-            }
-        });
-
-        // Búsqueda
-        document.querySelector('input[type="text"]').addEventListener('input', function(e) {
-            console.log('Buscando:', e.target.value);
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
