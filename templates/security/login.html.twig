@@ -53,6 +53,18 @@
             <!-- Formulario -->
             <form class="mt-8 space-y-6" method="post">
 
+                {% for flash in app.flashes('success') %}
+                <div class="rounded-md bg-green-50 p-4 mb-6 animate-appear">
+                    <div class="flex">
+                        <div class="ml-3">
+                            <div class="mt-2 text-sm text-green-700">
+                                {{ flash }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
                 <!-- Reemplaza la sección de error actual con esto -->
                 {% if error %}
                     <div class="rounded-md bg-red-50 p-4 mb-6 animate-appear">
@@ -142,7 +154,7 @@
             <div class="text-center">
                 <p class="text-sm text-gray-600">
                     ¿No tienes cuenta?
-                    <a href="#" class="font-medium text-green-600 hover:text-green-500 transition-colors">
+                    <a href="{{ path("app_register") }}" class="font-medium text-green-600 hover:text-green-500 transition-colors">
                         Regístrate aquí
                     </a>
                 </p>

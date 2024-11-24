@@ -37,11 +37,8 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email = '';
     #[ORM\Column(length: 255)]
     private string $password = '';
-
-
     #[ORM\Column]
     private array $roles = [];
-
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $fechaRegistro = null;
 
@@ -67,12 +64,18 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Fotos::class, mappedBy: 'idUsuario')]
     private Collection $fotos;
 
+    #[ORM\Column]
+    private ?bool $verificado;
+
 
     public function __construct()
     {
         $this->ascensos = new ArrayCollection();
         $this->comentarios = new ArrayCollection();
         $this->fotos = new ArrayCollection();
+
+        $this->fechaRegistro = new \DateTime();
+        $this->verificado = false;
 
     }
 
@@ -273,6 +276,18 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
+    }
+
+    public function verificado(): ?bool
+    {
+        return $this->verificado;
+    }
+
+    public function setVerificado(bool $verificado): static
+    {
+        $this->verificado = $verificado;
+
+        return $this;
     }
 
 
