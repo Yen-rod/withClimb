@@ -15,4 +15,12 @@ class UsuariosController extends AbstractController
             'controller_name' => 'UsuariosControllerPhpController',
         ]);
     }
+
+    #[Route('/dashboard', name: 'admin_dashboard')]
+    public function dashboard(): Response
+    {
+        return $this->render('dashboard/index.html.twig', [
+            'controller_name' => 'DashboardController',
+        ]);
+    }
 }
