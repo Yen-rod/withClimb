@@ -17,10 +17,21 @@
             }
         }
     </script>
+    <style>
+        /* Estilos para mantener el dropdown abierto al hacer hover */
+        .dropdown-content {
+            display: none;
+        }
+
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
 <!-- Navbar fixed -->
 <div class="fixed top-0 left-0 right-0 z-50">
+    <!-- El resto del HTML permanece igual hasta los dropdowns -->
     <header class="bg-black/90 backdrop-blur-sm text-white">
         <nav class="container mx-auto flex justify-between items-center h-16 px-4">
             <!-- Logo y búsqueda -->
@@ -36,7 +47,7 @@
             <!-- Menú derecho (desktop) -->
             <div class="hidden md:flex items-center gap-4">
                 <!-- Notificaciones -->
-                <div class="relative group">
+                <div class="relative dropdown" id="notifications-dropdown">
                     <button class="relative p-2 hover:bg-gray-800 rounded-lg transition-colors">
                         <span class="absolute -top-1 -right-1 bg-blue-500 text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -44,7 +55,7 @@
                         </svg>
                     </button>
                     <!-- Dropdown Notificaciones -->
-                    <div class="hidden group-hover:block absolute right-0 mt-2 w-80 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200 py-2">
+                    <div class="dropdown-content absolute right-0 mt-2 w-80 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200 py-2">
                         <div class="px-4 py-2 font-medium border-b border-gray-200">Notifications</div>
                         <div class="max-h-96 overflow-y-auto">
                             <a href="#" class="block px-4 py-3 hover:bg-gray-50">
@@ -58,13 +69,12 @@
                                     </div>
                                 </div>
                             </a>
-                            <!-- Más notificaciones aquí -->
                         </div>
                     </div>
                 </div>
 
                 <!-- Usuario Dropdown -->
-                <div class="relative group">
+                <div class="relative dropdown" id="profile-dropdown">
                     <button class="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg transition-colors">
                         <img src="/api/placeholder/32/32" alt="Avatar" class="w-8 h-8 rounded-full">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,7 +82,7 @@
                         </svg>
                     </button>
                     <!-- Dropdown Menu -->
-                    <div class="hidden group-hover:block absolute right-0 mt-2 w-48 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200">
+                    <div class="dropdown-content absolute right-0 mt-2 w-48 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200">
                         <div class="px-4 py-3 border-b border-gray-200">
                             <p class="text-sm font-medium">Roberto Manchado</p>
                             <p class="text-xs text-gray-500">roberto@email.com</p>
@@ -130,6 +140,7 @@
             </div>
         </div>
     </header>
+
 </div>
 
 <div class="mt-16">
@@ -228,23 +239,55 @@
             });
         });
 
+        // Manejo de dropdowns desktop
+        const dropdowns = document.querySelectorAll('.dropdown');
+
+        dropdowns.forEach(dropdown => {
+            const button = dropdown.querySelector('button');
+
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Cerrar otros dropdowns
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove('active');
+                });
+                // Toggle el actual
+                dropdown.classList.toggle('active');
+            });
+
+            // Evitar que el dropdown se cierre al hacer click dentro
+            dropdown.querySelector('.dropdown-content').addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+
+        // Cerrar dropdowns al hacer click fuera
+        document.addEventListener('click', () => {
+            dropdowns.forEach(d => d.classList.remove('active'));
+        });
+
+        // Manejo del menú móvil
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        mobileMenuButton.addEventListener('click', function() {
+        mobileMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
             mobileMenu.classList.toggle('hidden');
-            const icon = this.querySelector('svg');
+            const icon = mobileMenuButton.querySelector('svg');
             icon.style.transform = mobileMenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
             icon.style.transition = 'transform 0.3s ease';
         });
 
-        // Cerrar menú al hacer click fuera
-        document.addEventListener('click', function(event) {
-            if (!mobileMenu.contains(event.target) && !mobileMenuButton.contains(event.target)) {
-                mobileMenu.classList.add('hidden');
-                const icon = mobileMenuButton.querySelector('svg');
-                icon.style.transform = 'rotate(0deg)';
-            }
+        // Evitar que el menú móvil se cierre al hacer click dentro
+        mobileMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Cerrar menú móvil al hacer click fuera
+        document.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            const icon = mobileMenuButton.querySelector('svg');
+            icon.style.transform = 'rotate(0deg)';
         });
     });
 </script>
