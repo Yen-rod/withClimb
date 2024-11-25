@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nueva Zona - WithClimb</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geosearch/3.8.0/geosearch.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet">
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geosearch/3.8.0/bundle.min.js"></script>
+
     <style>
         #map { height: 300px; }
         .location-preview {
@@ -17,6 +21,37 @@
             padding: 0.5rem;
             background: #f3f4f6;
             border-radius: 0.5rem;
+        }
+        .map-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .map-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -51,7 +86,12 @@
                     <i class="fas fa-location-dot mr-2"></i>
                     Ubicación
                 </label>
-                <div id="map" class="rounded-lg"></div>
+                <div class="map-container">
+                    <div id="map-loader" class="map-loader">
+                        <div class="loader"></div>
+                    </div>
+                    <div id="map"></div>
+                </div>
                 <input type="hidden" name="ubicacion" id="ubicacionInput">
                 <div id="locationPreview" class="location-preview"></div>
             </div>
@@ -95,10 +135,42 @@
                 map = L.map('map').setView([lat, lng], 13);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
+                // Añadir buscador
+                const search = new GeoSearch.GeoSearchControl({
+                    provider: new GeoSearch.OpenStreetMapProvider(),
+                    style: 'bar',
+                    showMarker: true,
+                    showPopup: false,
+                    autoClose: true,
+                    searchLabel: 'Buscar ubicación...',
+                    keepResult: true
+                });
+
+                map.addControl(search);
+
+                // Evento para capturar la búsqueda
+                map.on('geosearch/showlocation', function(result) {
+                    if (result && result.location) {
+                        const location = {
+                            lat: parseFloat(result.location.lat),
+                            lng: parseFloat(result.location.lng)
+                        };
+
+                        if (!isNaN(location.lat) && !isNaN(location.lng)) {
+                            addMarker(location);
+                        }
+                    }
+                });
+
                 // Evento click para el marcador
                 map.on('click', function(e) {
                     addMarker(e.latlng);
                 });
+
+                setTimeout(() => {
+                    document.getElementById('map-loader').style.display = 'none';
+                }, 1500);
+
             }, 1000); // 1 segundo de delay para asegurar carga
         }
 
