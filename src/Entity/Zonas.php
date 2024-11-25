@@ -21,7 +21,7 @@ class Zonas
     #[ORM\Column(length: 255)]
     private ?string $ubicacion = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $descripcion = null;
 
     #[ORM\Column(nullable: true)]

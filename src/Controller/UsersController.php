@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class UsuariosController extends AbstractController
+class UsersController extends AbstractController
 {
     #[Route('/usuarios/perfil', name: 'usuarios_perfil')]
     public function index(): Response
