@@ -46,6 +46,65 @@
             border: 1px solid #d1d5db;
             border-radius: 0.375rem;
         }
+        @media (max-width: 768px) {
+            #zonasTable thead th:not(:first-child),
+            #zonasTable tbody td:not(:first-child) {
+                display: none;
+            }
+
+            #zonasTable tbody tr {
+                position: relative;
+                display: block;
+                padding: 1rem 0;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            #zonasTable tbody td:first-child {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 1rem;
+            }
+
+            .mobile-actions {
+                position: relative;
+            }
+
+            .mobile-menu-button {
+                padding: 0.5rem;
+                background: #f3f4f6;
+                border-radius: 0.375rem;
+            }
+
+            .mobile-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.375rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                z-index: 10;
+                min-width: 200px;
+            }
+
+            .mobile-menu.active {
+                display: block;
+            }
+
+            .mobile-menu-item {
+                padding: 0.75rem 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .mobile-menu-item:last-child {
+                border-bottom: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -76,11 +135,14 @@
 
 <script>
     $(document).ready(function() {
-        $('#zonasTable').DataTable({
-            ajax: '/api/zones/list',
-            dom: '<"flex justify-between items-center"lf>rtip',
-            className: 'stripe hover',
-            responsive: true,
+        var table = $('#zonasTable').DataTable({
+            processing: true,
+            serverSide: false, // Cambiamos a false si no implementamos server-side processing
+            ajax: {
+                url: '/api/zones/list',
+                type: 'GET',
+                dataSrc: 'data' // Importante: indica dónde están los datos en la respuesta
+            },
             columns: [
                 { data: 'nombre' },
                 {
@@ -90,35 +152,105 @@
                         return `${coords[0].substring(0,8)}, ${coords[1].substring(0,8)}`;
                     }
                 },
-                {
-                    data: 'bloques',
-                    render: function(data) {
-                        return data ? data.length : 0;
-                    }
-                },
+                { data: 'bloques' },
                 { data: 'totalAscensos' },
                 {
-                    data: 'id',
+                    data: 'acciones',
                     render: function(data) {
                         return `
-                                <div class="flex gap-2">
-                                    <a href="/zonas/${data}" class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="/zonas/${data}/edit" class="text-yellow-600 hover:text-yellow-800">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button onclick="deleteZona(${data})" class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            `;
+                    <div class="flex gap-2">
+                        <a href="/zonas/${data}" class="text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="/zonas/${data}/edit" class="text-yellow-600 hover:text-yellow-800">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button onclick="deleteZona(${data})" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
                     }
                 }
             ],
+            responsive: true,
+            columnDefs: [
+                {
+                    targets: [1, 2, 3, 4],
+                    className: 'desktop'
+                }
+            ],
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                search: ''
+            },
+            dom: '<"flex flex-wrap justify-between items-center"f>rtip',
+            drawCallback: function() {
+                if ($(window).width() <= 768) {
+                    this.api().cells().every(function() {
+                        let data = this.data();
+                        let index = this.index().column;
+                        if (index === 0) {
+                            // Modificar la celda del nombre para incluir el menú
+                            let row = this.node().parentElement;
+                            let id = $(row).find('td:last').find('button').attr('data-id');
+                            this.node().innerHTML = `
+                            <div class="flex justify-between items-center w-full">
+                                <span>${data}</span>
+                                <div class="mobile-actions">
+                                    <button class="mobile-menu-button">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="mobile-menu">
+                                        <div class="mobile-menu-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>${$(row).find('td:eq(1)').text()}</span>
+                                        </div>
+                                        <div class="mobile-menu-item">
+                                            <i class="fas fa-cube"></i>
+                                            <span>Bloques: ${$(row).find('td:eq(2)').text()}</span>
+                                        </div>
+                                        <div class="mobile-menu-item">
+                                            <i class="fas fa-mountain"></i>
+                                            <span>Ascensos: ${$(row).find('td:eq(3)').text()}</span>
+                                        </div>
+                                        <a href="/zonas/${id}" class="mobile-menu-item text-blue-600">
+                                            <i class="fas fa-eye"></i>
+                                            <span>Ver detalles</span>
+                                        </a>
+                                        <a href="/zonas/${id}/edit" class="mobile-menu-item text-yellow-600">
+                                            <i class="fas fa-edit"></i>
+                                            <span>Editar</span>
+                                        </a>
+                                        <button onclick="deleteZona(${id})" class="mobile-menu-item text-red-600">
+                                            <i class="fas fa-trash"></i>
+                                            <span>Eliminar</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        }
+                    });
+                }
             }
+        });
+
+        // Manejador para el menú móvil
+        $(document).on('click', '.mobile-menu-button', function(e) {
+            e.stopPropagation();
+            $('.mobile-menu').not($(this).next('.mobile-menu')).removeClass('active');
+            $(this).next('.mobile-menu').toggleClass('active');
+        });
+
+        // Cerrar menú al hacer click fuera
+        $(document).on('click', function() {
+            $('.mobile-menu').removeClass('active');
+        });
+
+        // Prevenir cierre al hacer click dentro del menú
+        $(document).on('click', '.mobile-menu', function(e) {
+            e.stopPropagation();
         });
     });
 

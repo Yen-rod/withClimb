@@ -46,19 +46,23 @@ class ZonesApiController extends AbstractController
     {
         $zonas = $em->getRepository(Zonas::class)->findAll();
 
-        $data = [
-            'data' => array_map(function($zona) {
-                return [
-                    'id' => $zona->getId(),
-                    'nombre' => $zona->getNombre(),
-                    'ubicacion' => $zona->getUbicacion(),
-                    'bloques' => $zona->getBloques()->toArray(),
-                    'totalAscensos' => $zona->getTotalAscensos() ?? 0,
-                ];
-            }, $zonas)
-        ];
+        $data = array_map(function($zona) {
+            return [
+                'id' => $zona->getId(),
+                'nombre' => $zona->getNombre(),
+                'ubicacion' => $zona->getUbicacion(),
+                'bloques' => count($zona->getBloques()),
+                'totalAscensos' => $zona->getTotalAscensos() ?? 0,
+                'acciones' => $zona->getId(), // Se utilizará para generar los botones
+            ];
+        }, $zonas);
 
-        return new JsonResponse($data);
+        return new JsonResponse([
+            'data' => $data,
+            'recordsTotal' => count($data),
+            'recordsFiltered' => count($data),
+            'draw' => intval(Request::createFromGlobals()->query->get('draw'))
+        ]);
     }
 
     #[Route('/{id}', name: 'zones_delete', methods: ['DELETE'])]
