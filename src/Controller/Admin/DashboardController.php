@@ -20,6 +20,6 @@ class DashboardController extends AbstractController
     #[Route('/zones', name: 'admin_zones')]
     public function zones(): Response
     {
-        return $this->render('dashboard/zones/index.html.twig');
+        return $this->render('dashboard/zones/list.html.twig');
     }
 }
