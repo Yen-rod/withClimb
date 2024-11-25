@@ -1,20 +1,265 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Vía de Escalada - WithClimb</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 
-{% block title %}Hello DashboardController!{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <style>
+        .custom-file-upload:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .nav-header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        .nav-items {
+            display: flex;
+            align-items: center;
+            height: 4rem;
+            gap: 2rem;
+        }
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/xampp/htdocs/withClimb/src/Controller/DashboardController.php</code></li>
-        <li>Your template at <code>C:/xampp/htdocs/withClimb/templates/dashboard/index.html.twig</code></li>
-    </ul>
+        .nav-link {
+            color: #4B5563;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2563EB;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #2563EB;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        @media (max-width: 640px) {
+            .nav-items {
+                gap: 1rem;
+            }
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-50">
+<!-- Navegación -->
+<header class="nav-header">
+    <div class="nav-container">
+        <nav class="nav-items">
+            <a href="/" class="text-xl font-bold text-blue-600">WithClimb</a>
+            <div class="flex gap-6">
+                <a href="/vias" class="nav-link">Vías</a>
+                <a href="/restaurantes" class="nav-link">Restaurantes</a>
+                <a href="{{ path('admin_zones') }}" class="nav-link">Zonas</a>
+            </div>
+        </nav>
+    </div>
+</header>
+<div class="min-h-screen p-4 md:p-6 lg:p-8 pt-16">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">Nueva Vía de Escalada</h1>
+                <p class="text-sm text-gray-600">Añade una nueva ruta de escalada al sistema</p>
+            </div>
+
+            <form id="viaForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-medium text-gray-700">
+                            <i class="fas fa-mountain mr-2"></i>
+                            Nombre de la Vía
+                        </label>
+                        <input
+                                type="text"
+                                name="nombre"
+                                required
+                                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Nombre de la vía"
+                        >
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-medium text-gray-700">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Grado de Dificultad
+                        </label>
+                        <select
+                                name="gradoDificultad"
+                                required
+                                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="">Seleccionar grado</option>
+                            <option value="4">4</option>
+                            <option value="5a">5a</option>
+                            <option value="5b">5b</option>
+                            <option value="6a">6a</option>
+                            <option value="6b">6b</option>
+                            <option value="7a">7a</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="flex items-center text-sm font-medium text-gray-700">
+                        <i class="fas fa-align-left mr-2"></i>
+                        Descripción
+                    </label>
+                    <textarea
+                            name="descripcion"
+                            rows="4"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Describe la vía, características, recomendaciones..."
+                    ></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="flex items-center text-sm font-medium text-gray-700">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        Bloque
+                    </label>
+                    <select
+                            name="idBloque"
+                            required
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Seleccionar bloque</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="flex items-center text-sm font-medium text-gray-700">
+                        <i class="fas fa-camera mr-2"></i>
+                        Fotos de la Vía
+                    </label>
+                    <div class="flex items-center justify-center w-full">
+                        <label class="custom-file-upload flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-500">Arrastra las fotos o haz click para subirlas</p>
+                                <p class="text-xs text-gray-500">(PNG, JPG, máximo 10MB)</p>
+                            </div>
+                            <input type="file" name="fotos" multiple accept="image/*" class="hidden">
+                        </label>
+                    </div>
+                    <div id="preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+                </div>
+
+                <div class="flex gap-4 justify-end pt-4">
+                    <button
+                            type="button"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                            onclick="window.history.back()"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                            type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                    >
+                        Crear Vía
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-{% endblock %}
+
+{#  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('viaForm');
+        const fileInput = form.querySelector('input[type="file"]');
+        const preview = document.getElementById('preview');
+
+        // Cargar bloques desde el servidor
+        fetch('/api/bloques')
+            .then(response => response.json())
+            .then(bloques => {
+                const select = form.querySelector('select[name="idBloque"]');
+                bloques.forEach(bloque => {
+                    const option = document.createElement('option');
+                    option.value = bloque.id;
+                    option.textContent = bloque.nombre;
+                    select.appendChild(option);
+                });
+            });
+
+        // Preview de imágenes
+        fileInput.addEventListener('change', function() {
+            preview.innerHTML = '';
+            Array.from(this.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative';
+                    div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg">
+                            <button type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Manejo del formulario
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/api/vias', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Vía creada con éxito');
+                    window.location.href = '/vias';
+                } else {
+                    throw new Error('Error al crear la vía');
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+    });
+</script> #}
+</body>
+</html>

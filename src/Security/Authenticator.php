@@ -2,6 +2,9 @@
 
 namespace App\Security;
 
+
+
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,9 +24,8 @@ class Authenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
-    {
-    }
+    public function __construct(private readonly Security $security,private readonly UrlGeneratorInterface $urlGenerator)
+    {}
 
     public function authenticate(Request $request): Passport
     {
@@ -48,13 +50,11 @@ class Authenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        if(in_array('ROLE_USER', $token->getRoleNames())){
-            return new RedirectResponse($this->urlGenerator->generate('usuarios_perfil'));
-        } else if(in_array('ROLE_ADMIN', $token->getRoleNames())){
-            return new RedirectResponse($this->urlGenerator->generate('app_dashboard'));
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return new RedirectResponse($this->urlGenerator->generate('admin_dashboard'));
         }
 
-        throw new \Exception('No se pudo redirigir al usuario');
+        return new RedirectResponse($this->urlGenerator->generate('usuarios_perfil'));
 
     }
 

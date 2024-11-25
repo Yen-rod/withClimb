@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Zona - WithClimb</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" rel="stylesheet">
+    <style>
+        #map { height: 300px; }
+        .location-preview {
+            display: none;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+<main class="main-content mt-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-6">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Nueva Zona de Escalada</h1>
+            <p class="text-sm text-gray-600">Añade una nueva zona de escalada</p>
+        </div>
+
+        <form id="zonaForm" class="space-y-6">
+            <!-- Nombre -->
+            <div class="space-y-2">
+                <label class="flex items-center text-sm font-medium text-gray-700">
+                    <i class="fas fa-map-marked-alt mr-2"></i>
+                    Nombre de la Zona
+                </label>
+                <input
+                        type="text"
+                        name="nombre"
+                        required
+                        maxlength="100"
+                        class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="Nombre de la zona"
+                >
+            </div>
+
+            <!-- Ubicación -->
+            <div class="space-y-2">
+                <label class="flex items-center text-sm font-medium text-gray-700">
+                    <i class="fas fa-location-dot mr-2"></i>
+                    Ubicación
+                </label>
+                <div id="map" class="rounded-lg"></div>
+                <input type="hidden" name="ubicacion" id="ubicacionInput">
+                <div id="locationPreview" class="location-preview"></div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="space-y-2">
+                <label class="flex items-center text-sm font-medium text-gray-700">
+                    <i class="fas fa-align-left mr-2"></i>
+                    Descripción
+                </label>
+                <textarea
+                        name="descripcion"
+                        rows="4"
+                        class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="Describe la zona, accesos, características..."
+                ></textarea>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex gap-4 justify-end pt-4">
+                <button type="button" onclick="window.history.back()"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                    Crear Zona
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let map;
+
+        // Función para inicializar el mapa
+        function initMap(lat, lng) {
+            setTimeout(() => {
+                map = L.map('map').setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+                // Evento click para el marcador
+                map.on('click', function(e) {
+                    addMarker(e.latlng);
+                });
+            }, 1000); // 1 segundo de delay para asegurar carga
+        }
+
+        // Función para añadir marcador
+        function addMarker(latlng) {
+            if (window.currentMarker) {
+                map.removeLayer(window.currentMarker);
+            }
+            window.currentMarker = L.marker(latlng).addTo(map);
+
+            document.getElementById('ubicacionInput').value = `${latlng.lat},${latlng.lng}`;
+            document.getElementById('locationPreview').style.display = 'block';
+            document.getElementById('locationPreview').innerHTML = `
+           <small>Ubicación seleccionada: ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}</small>
+       `;
+        }
+
+        // Inicializar con geolocalización o Madrid como fallback
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => initMap(position.coords.latitude, position.coords.longitude),
+                () => initMap(40.4168, -3.7038) // Madrid como fallback
+            );
+        } else {
+            initMap(40.4168, -3.7038);
+        }
+    });
+</script>
+</body>
+</html>
