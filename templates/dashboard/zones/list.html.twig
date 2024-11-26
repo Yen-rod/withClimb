@@ -1,16 +1,149 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zonas de Escalada - WithClimb</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+{% extends 'dashboard/index.html.twig' %}
 
+    {% block js %}
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                var table = $('#zonasTable').DataTable({
+                    processing: true,
+                    serverSide: false, // Cambiamos a false si no implementamos server-side processing
+                    ajax: {
+                        url: '/api/zones/list',
+                        type: 'GET',
+                        dataSrc: 'data' // Importante: indica dónde están los datos en la respuesta
+                    },
+                    columns: [
+                        { data: 'nombre' },
+                        {
+                            data: 'ubicacion',
+                            render: function(data) {
+                                const coords = data.split(',');
+                                return `${coords[0].substring(0,8)}, ${coords[1].substring(0,8)}`;
+                            }
+                        },
+                        { data: 'bloques' },
+                        { data: 'totalAscensos' },
+                        {
+                            data: 'acciones',
+                            render: function(data) {
+                                return `
+                    <div class="flex gap-2">
+                        <a href="/admin/zones/view/${data}" class="text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="/zonas/${data}/edit" class="text-yellow-600 hover:text-yellow-800">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button onclick="deleteZona(${data})" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                            }
+                        }
+                    ],
+                    responsive: true,
+                    columnDefs: [
+                        {
+                            targets: [1, 2, 3, 4],
+                            className: 'desktop'
+                        }
+                    ],
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                        search: ''
+                    },
+                    dom: '<"flex flex-wrap justify-between items-center"f>rtip',
+                    drawCallback: function() {
+                        if ($(window).width() <= 768) {
+                            this.api().cells().every(function() {
+                                let data = this.data();
+                                let index = this.index().column;
+                                if (index === 0) {
+                                    // Modificar la celda del nombre para incluir el menú
+                                    let row = this.node().parentElement;
+                                    let id = $(row).find('td:last').find('button').attr('data-id');
+                                    this.node().innerHTML = `
+                            <div class="flex justify-between items-center w-full">
+                                <span>${data}</span>
+                                <div class="mobile-actions">
+                                    <button class="mobile-menu-button">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="mobile-menu">
+                                        <div class="mobile-menu-item">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>${$(row).find('td:eq(1)').text()}</span>
+                                        </div>
+                                        <div class="mobile-menu-item">
+                                            <i class="fas fa-cube"></i>
+                                            <span>Bloques: ${$(row).find('td:eq(2)').text()}</span>
+                                        </div>
+                                        <div class="mobile-menu-item">
+                                            <i class="fas fa-mountain"></i>
+                                            <span>Ascensos: ${$(row).find('td:eq(3)').text()}</span>
+                                        </div>
+                                        <a href="/admin/zones/view/${id}" class="mobile-menu-item text-blue-600">
+                                            <i class="fas fa-eye"></i>
+                                            <span>Ver detalles</span>
+                                        </a>
+                                        <a href="/zonas/${id}/edit" class="mobile-menu-item text-yellow-600">
+                                            <i class="fas fa-edit"></i>
+                                            <span>Editar</span>
+                                        </a>
+                                        <button onclick="deleteZona(${id})" class="mobile-menu-item text-red-600">
+                                            <i class="fas fa-trash"></i>
+                                            <span>Eliminar</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                                }
+                            });
+                        }
+                    }
+                });
+
+                // Manejador para el menú móvil
+                $(document).on('click', '.mobile-menu-button', function(e) {
+                    e.stopPropagation();
+                    $('.mobile-menu').not($(this).next('.mobile-menu')).removeClass('active');
+                    $(this).next('.mobile-menu').toggleClass('active');
+                });
+
+                // Cerrar menú al hacer click fuera
+                $(document).on('click', function() {
+                    $('.mobile-menu').removeClass('active');
+                });
+
+                // Prevenir cierre al hacer click dentro del menú
+                $(document).on('click', '.mobile-menu', function(e) {
+                    e.stopPropagation();
+                });
+            });
+
+            function deleteZona(id) {
+                if (confirm('¿Estás seguro de que quieres eliminar esta zona?')) {
+                    fetch(`/api/zones/${id}`, {
+                        method: 'DELETE'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                $('#zonasTable').DataTable().ajax.reload();
+                                toastr.success('Zona eliminada correctamente');
+                            }
+                        });
+                }
+            }
+        </script>
+    {% endblock %}
+
+    {% block css %}
     <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-
     <style>
         #zonasTable {
             width: 100%;
@@ -112,8 +245,9 @@
             }
         }
     </style>
-</head>
-<body class="bg-gray-50">
+    {% endblock %}
+
+{% block content %}
 <main class="main-content mt-8">
     <div class="max-w-6xl mx-auto">
         <div class="bg-white rounded-lg shadow-sm p-6">
@@ -138,142 +272,4 @@
         </div>
     </div>
 </main>
-
-<script>
-    $(document).ready(function() {
-        var table = $('#zonasTable').DataTable({
-            processing: true,
-            serverSide: false, // Cambiamos a false si no implementamos server-side processing
-            ajax: {
-                url: '/api/zones/list',
-                type: 'GET',
-                dataSrc: 'data' // Importante: indica dónde están los datos en la respuesta
-            },
-            columns: [
-                { data: 'nombre' },
-                {
-                    data: 'ubicacion',
-                    render: function(data) {
-                        const coords = data.split(',');
-                        return `${coords[0].substring(0,8)}, ${coords[1].substring(0,8)}`;
-                    }
-                },
-                { data: 'bloques' },
-                { data: 'totalAscensos' },
-                {
-                    data: 'acciones',
-                    render: function(data) {
-                        return `
-                    <div class="flex gap-2">
-                        <a href="/admin/zones/view/${data}" class="text-blue-600 hover:text-blue-800">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="/zonas/${data}/edit" class="text-yellow-600 hover:text-yellow-800">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <button onclick="deleteZona(${data})" class="text-red-600 hover:text-red-800">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                    }
-                }
-            ],
-            responsive: true,
-            columnDefs: [
-                {
-                    targets: [1, 2, 3, 4],
-                    className: 'desktop'
-                }
-            ],
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
-                search: ''
-            },
-            dom: '<"flex flex-wrap justify-between items-center"f>rtip',
-            drawCallback: function() {
-                if ($(window).width() <= 768) {
-                    this.api().cells().every(function() {
-                        let data = this.data();
-                        let index = this.index().column;
-                        if (index === 0) {
-                            // Modificar la celda del nombre para incluir el menú
-                            let row = this.node().parentElement;
-                            let id = $(row).find('td:last').find('button').attr('data-id');
-                            this.node().innerHTML = `
-                            <div class="flex justify-between items-center w-full">
-                                <span>${data}</span>
-                                <div class="mobile-actions">
-                                    <button class="mobile-menu-button">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <div class="mobile-menu">
-                                        <div class="mobile-menu-item">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            <span>${$(row).find('td:eq(1)').text()}</span>
-                                        </div>
-                                        <div class="mobile-menu-item">
-                                            <i class="fas fa-cube"></i>
-                                            <span>Bloques: ${$(row).find('td:eq(2)').text()}</span>
-                                        </div>
-                                        <div class="mobile-menu-item">
-                                            <i class="fas fa-mountain"></i>
-                                            <span>Ascensos: ${$(row).find('td:eq(3)').text()}</span>
-                                        </div>
-                                        <a href="/admin/zones/view/${id}" class="mobile-menu-item text-blue-600">
-                                            <i class="fas fa-eye"></i>
-                                            <span>Ver detalles</span>
-                                        </a>
-                                        <a href="/zonas/${id}/edit" class="mobile-menu-item text-yellow-600">
-                                            <i class="fas fa-edit"></i>
-                                            <span>Editar</span>
-                                        </a>
-                                        <button onclick="deleteZona(${id})" class="mobile-menu-item text-red-600">
-                                            <i class="fas fa-trash"></i>
-                                            <span>Eliminar</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        }
-                    });
-                }
-            }
-        });
-
-        // Manejador para el menú móvil
-        $(document).on('click', '.mobile-menu-button', function(e) {
-            e.stopPropagation();
-            $('.mobile-menu').not($(this).next('.mobile-menu')).removeClass('active');
-            $(this).next('.mobile-menu').toggleClass('active');
-        });
-
-        // Cerrar menú al hacer click fuera
-        $(document).on('click', function() {
-            $('.mobile-menu').removeClass('active');
-        });
-
-        // Prevenir cierre al hacer click dentro del menú
-        $(document).on('click', '.mobile-menu', function(e) {
-            e.stopPropagation();
-        });
-    });
-
-    function deleteZona(id) {
-        if (confirm('¿Estás seguro de que quieres eliminar esta zona?')) {
-            fetch(`/api/zones/${id}`, {
-                method: 'DELETE'
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        $('#zonasTable').DataTable().ajax.reload();
-                        toastr.success('Zona eliminada correctamente');
-                    }
-                });
-        }
-    }
-</script>
-</body>
-</html>
+{% endblock %}
