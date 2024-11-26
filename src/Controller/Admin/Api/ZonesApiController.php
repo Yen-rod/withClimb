@@ -77,4 +77,43 @@ class ZonesApiController extends AbstractController
             return new JsonResponse(['status' => 'error', 'message' => $e->getMessage()], 400);
         }
     }
+
+    #[Route('/details/{id}', name: 'api_zona_detail', methods: ['GET'])]
+    public function getZonaDetail(Zonas $zona): JsonResponse
+    {
+        // Preparar los datos de la zona con sus relaciones
+        $zonaData = [
+            'id' => $zona->getId(),
+            'nombre' => $zona->getNombre(),
+            'ubicacion' => $zona->getUbicacion(),
+            'descripcion' => $zona->getDescripcion(),
+            'totalAscensos' => $zona->getTotalAscensos(),
+            'bloques' => array_map(function($bloque) {
+                return [
+                    'id' => $bloque->getId(),
+                    'nombre' => $bloque->getNombre(),
+                    'descripcion' => $bloque->getDescripcion(),
+                    'totalAscensos' => $bloque->getTotalAscensos(),
+                    'vias' => array_map(function($via) {
+                        return [
+                            'id' => $via->getId(),
+                            'nombre' => $via->getNombre(),
+                            'gradoDificultad' => $via->getGradoDificultad(),
+                            'totalAscensos' => $via->getTotalAscensos()
+                        ];
+                    }, $bloque->getVias()->toArray())
+                ];
+            }, $zona->getBloques()->toArray()),
+            'restaurantes' => array_map(function($restaurante) {
+                return [
+                    'id' => $restaurante->getId(),
+                    'nombre' => $restaurante->getNombre(),
+                    'ubicacion' => $restaurante->getUbicacion(),
+                    'contacto' => $restaurante->getContacto()
+                ];
+            }, $zona->getRestaurantes()->toArray())
+        ];
+
+        return new JsonResponse($zonaData);
+    }
 }

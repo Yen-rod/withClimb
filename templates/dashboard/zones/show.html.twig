@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js" defer></script>
+    <title>Detalle de Zona</title>
+</head>
+<body class="bg-gray-50">
+<div id="zonaContainer" data-zona-id="{{ zonaId }}" class="max-w-7xl mx-auto p-4 space-y-6">
+    <!-- Spinner de carga -->
+    <div id="loading" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div id="error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline" id="errorMessage"></span>
+    </div>
+
+    <!-- Contenido principal -->
+    <div id="zonaContent" class="hidden space-y-6">
+        <!-- Cabecera de la zona -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900" id="zonaNombre"></h1>
+                    <p class="text-gray-500 mt-2 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span id="zonaUbicacion"></span>
+                    </p>
+                </div>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span id="zonaTotalAscensos"></span>
+                    </span>
+            </div>
+            <p class="mt-4 text-gray-600" id="zonaDescripcion"></p>
+        </div>
+
+        <!-- Tabs -->
+        <div x-data="{ activeTab: 'bloques' }" class="bg-white rounded-lg shadow-sm">
+            <div class="border-b border-gray-200">
+                <nav class="flex -mb-px" aria-label="Tabs">
+                    <button
+                            @click="activeTab = 'bloques'"
+                            :class="{'border-blue-500 text-blue-600': activeTab === 'bloques',
+                                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'bloques'}"
+                            class="w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                        Bloques
+                    </button>
+                    <button
+                            @click="activeTab = 'restaurantes'"
+                            :class="{'border-blue-500 text-blue-600': activeTab === 'restaurantes',
+                                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'restaurantes'}"
+                            class="w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                        Restaurantes
+                    </button>
+                    <button
+                            @click="activeTab = 'estadisticas'"
+                            :class="{'border-blue-500 text-blue-600': activeTab === 'estadisticas',
+                                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'estadisticas'}"
+                            class="w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                        Estadísticas
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Contenido de las tabs -->
+            <div class="p-4">
+                <!-- Tab Bloques -->
+                <div x-show="activeTab === 'bloques'" class="grid gap-4 md:grid-cols-2" id="bloquesContainer">
+                </div>
+
+                <!-- Tab Restaurantes -->
+                <div x-show="activeTab === 'restaurantes'" class="grid gap-4 md:grid-cols-2" id="restaurantesContainer">
+                </div>
+
+                <!-- Tab Estadísticas -->
+                <div x-show="activeTab === 'estadisticas'" class="grid grid-cols-1 gap-4 sm:grid-cols-3" id="estadisticasContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Cargado - Iniciando aplicación');
+
+        const container = document.getElementById('zonaContainer');
+        const zonaId = container.dataset.zonaId;
+
+        console.log('ID de zona encontrado:', zonaId);
+
+        if (!zonaId) {
+            mostrarError('No se encontró el ID de la zona');
+            return;
+        }
+
+        cargarDatosZona(zonaId);
+    });
+
+    async function cargarDatosZona(zonaId) {
+        const loading = document.getElementById('loading');
+        const content = document.getElementById('zonaContent');
+        const error = document.getElementById('error');
+
+        try {
+            loading.classList.remove('hidden');
+            content.classList.add('hidden');
+            error.classList.add('hidden');
+
+            console.log('Iniciando fetch a:', `/api/zones/details/${zonaId}`);
+            const response = await fetch(`/api/zones/details/${zonaId}`);
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            const zonaData = await response.json();
+            console.log('Datos recibidos:', zonaData);
+
+            actualizarContenidoZona(zonaData);
+            content.classList.remove('hidden');
+        } catch (err) {
+            console.error('Error al cargar datos:', err);
+            mostrarError('Error al cargar los datos de la zona');
+        } finally {
+            loading.classList.add('hidden');
+        }
+    }
+
+    function actualizarContenidoZona(zonaData) {
+        // Actualizar información básica
+        document.getElementById('zonaNombre').textContent = zonaData.nombre;
+        document.getElementById('zonaUbicacion').textContent = zonaData.ubicacion;
+        document.getElementById('zonaDescripcion').textContent = zonaData.descripcion;
+        document.getElementById('zonaTotalAscensos').textContent = `${zonaData.totalAscensos} ascensos`;
+
+        // Cargar las diferentes secciones
+        cargarBloques(zonaData.bloques);
+        cargarRestaurantes(zonaData.restaurantes);
+        cargarEstadisticas(zonaData);
+    }
+
+    function cargarBloques(bloques) {
+        const bloquesContainer = document.getElementById('bloquesContainer');
+        bloquesContainer.innerHTML = bloques.map(bloque => `
+                <div class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">${bloque.nombre}</h3>
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                            ${bloque.totalAscensos} ascensos
+                        </span>
+                    </div>
+                    <p class="text-gray-600 mb-4">${bloque.descripcion}</p>
+                    <div class="space-y-2">
+                        ${bloque.vias.map(via => `
+                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                <span class="font-medium">${via.nombre}</span>
+                                <div class="flex items-center space-x-4">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
+                                        ${via.gradoDificultad}
+                                    </span>
+                                    <span class="text-sm text-gray-500">${via.totalAscensos} ascensos</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    function cargarRestaurantes(restaurantes) {
+        const restaurantesContainer = document.getElementById('restaurantesContainer');
+        restaurantesContainer.innerHTML = restaurantes.map(restaurante => `
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">${restaurante.nombre}</h3>
+                    <p class="text-gray-600">${restaurante.ubicacion}</p>
+                    <p class="text-gray-600">${restaurante.contacto}</p>
+                </div>
+            `).join('');
+    }
+
+    function cargarEstadisticas(zonaData) {
+        const totalVias = zonaData.bloques.reduce((total, bloque) => total + bloque.vias.length, 0);
+        const estadisticasContainer = document.getElementById('estadisticasContainer');
+
+        estadisticasContainer.innerHTML = `
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <dt class="text-sm font-medium text-gray-500">Total Ascensos</dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">${zonaData.totalAscensos}</dd>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <dt class="text-sm font-medium text-gray-500">Total Bloques</dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">${zonaData.bloques.length}</dd>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <dt class="text-sm font-medium text-gray-500">Total Vías</dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">${totalVias}</dd>
+                </div>
+            `;
+    }
+
+    function mostrarError(mensaje) {
+        const error = document.getElementById('error');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+
+        errorMessage.textContent = mensaje;
+        error.classList.remove('hidden');
+        loading.classList.add('hidden');
+    }
+</script>
+</body>
+</html>

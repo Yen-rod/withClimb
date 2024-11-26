@@ -229,7 +229,7 @@
                 .then(data => {
                     if(data.status === 'success') {
                         toastr.success('Zona creada correctamente');
-                        setTimeout(() => window.location.href = '/api/zones/list', 3000);
+                        setTimeout(() => window.location.href = '/admin/zones/list', 3000);
                     } else {
                         toastr.error(data.message || 'Error al crear la zona');
                     }
