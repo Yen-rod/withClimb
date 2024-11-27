@@ -32,6 +32,11 @@ class UsuariosRepository extends ServiceEntityRepository implements PasswordUpgr
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+    public function store(Usuarios $user): void
+    {
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+    }
 
     //    /**
     //     * @return Users[] Returns an array of Users objects

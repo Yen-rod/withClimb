@@ -5,15 +5,16 @@ namespace App\Controller;
 use App\Entity\Usuarios;
 use App\Form\RegistrationFormType;
 use App\Repository\UsuariosRepository;
+use App\Service\EmailSender;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
-use function Symfony\Component\Translation\t;
 
 class RegistrationController extends AbstractController
 {
@@ -22,7 +23,8 @@ class RegistrationController extends AbstractController
         private readonly UserPasswordHasherInterface $userPasswordHasher,
         private readonly EntityManagerInterface $entityManager,
         private readonly VerifyEmailHelperInterface $verifyEmailHelper,
-        private readonly UsuariosRepository $usuariosRepository
+        private readonly UsuariosRepository $usuariosRepository,
+        private readonly EmailSender $emailSender
     ){}
 
     #[Route('/register', name: 'app_register')]
@@ -51,9 +53,14 @@ class RegistrationController extends AbstractController
                 ['id' => $user->getId()]
             );
 
+            try {
+                $this->emailSender->sendEmailConfirmation($signatureComponents, $user);
+                $this->addFlash('success', 'Se ha enviado un email de confirmación. Revisa tu bandeja de correo');
+            } catch (TransportExceptionInterface $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
 
-            // TODO: in a real app, send this as an email!
-            $this->addFlash('success', 'Confirm your email at: '.$signatureComponents->getSignedUrl());
+            return $this->redirectToRoute('app_register');
 
         }
 
