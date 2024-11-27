@@ -27,9 +27,6 @@ class Comentarios
     private ?Usuarios $idUsuario = null;
 
     #[ORM\ManyToOne(inversedBy: 'comentarios')]
-    private ?TipoComentario $idTipoComentario = null;
-
-    #[ORM\ManyToOne(inversedBy: 'comentarios')]
     private ?Vias $vias = null;
 
     #[ORM\ManyToOne(inversedBy: 'comentarios')]
@@ -105,19 +102,6 @@ class Comentarios
 
         return $this;
     }
-
-    public function getIdTipoComentario(): ?TipoComentario
-    {
-        return $this->idTipoComentario;
-    }
-
-    public function setIdTipoComentario(?TipoComentario $idTipoComentario): static
-    {
-        $this->idTipoComentario = $idTipoComentario;
-
-        return $this;
-    }
-
     
     public function getvias(): ?Vias
     {
@@ -133,7 +117,7 @@ class Comentarios
 
     public function getRestaurantes(): ?Restaurantes
     {
-        return $this->vias;
+        return $this->restaurantes;
     }
 
     public function setRestaurantes(?Restaurantes $restaurantes): static

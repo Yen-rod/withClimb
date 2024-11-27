@@ -28,9 +28,6 @@ class Fotos
     #[ORM\ManyToOne(inversedBy: 'fotos')]
     private ?Usuarios $idUsuario = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tipofotoFotos')]
-    private ?TipoFoto $fotoTipoFoto = null;
-
     #[ORM\ManyToOne(inversedBy: 'fotos')]
     private ?Vias $vias = null;
 
@@ -105,18 +102,6 @@ class Fotos
     public function setVias(?Vias $vias): static
     {
         $this->vias = $vias;
-
-        return $this;
-    }
-
-    public function getFotoTipoFoto(): ?TipoFoto
-    {
-        return $this->fotoTipoFoto;
-    }
-
-    public function setFotoTipoFoto(?TipoFoto $fotoTipoFoto): static
-    {
-        $this->fotoTipoFoto = $fotoTipoFoto;
 
         return $this;
     }
